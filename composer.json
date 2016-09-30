@@ -1,0 +1,29 @@
+{
+	"name": "nextras/schematicon",
+	"type": "library",
+	"description": "Nextras Schemation is validator of various data structures.",
+	"keywords": ["validator", "structure", "schematicon", "nextras"],
+	"homepage": "https://github.com/nextras/schematicon",
+	"license": "MIT",
+	"authors": [
+		{ "name": "Nextras Project", "homepage": "https://github.com/nextras/schematicon/graphs/contributors" }
+	],
+	"support": {
+		"issues": "https://github.com/nextras/schematicon/issues"
+	},
+	"require": {
+	},
+	"require-dev": {
+		"nette/neon": "~2.4",
+		"nette/tester": "~1.7",
+		"tracy/tracy": "~2.4"
+	},
+	"autoload": {
+		"psr-4": { "Nextras\\Schematicon\\": "src/" }
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0-dev"
+		}
+	}
+}
