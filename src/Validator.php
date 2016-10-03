@@ -62,6 +62,14 @@ final class Validator
 						$isValid = $this->validateInnerKeys($node, $schema, $path, $stack, $errors);
 						break;
 					}
+				} elseif ($type === 'const') {
+					$isValid = $node === $schema['value'];
+					if (!$isValid) {
+						$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+						array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
+					}
+					break;
+
 				} elseif ($type === 'anyOf') {
 					$isValid = $this->validateAnyOf($node, $schema, $path, $stack, $errors);
 					break;

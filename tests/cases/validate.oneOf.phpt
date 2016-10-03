@@ -23,6 +23,29 @@ basic:
 			keys:
 				age:
 					type: int
+advanced:
+	type: oneOf
+	options:
+		-
+			type: map
+			keys:
+				type:
+					type: const
+					value: poi
+				name:
+					type: string
+				destination:
+					type: int
+		-
+			type: map
+			keys:
+				type:
+					type: const
+					value: destination
+				name:
+					type: string
+				id:
+					type: int
 NEON
 );
 
@@ -67,5 +90,41 @@ Assert::same(
 	$validator->validate([
 		'name' => 'john',
 		'age' => 3,
+	])->getErrors()
+);
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator($config['advanced']);
+
+Assert::same(
+	[],
+	$validator->validate([
+		'type' => 'poi',
+		'name' => 'Liberty Square',
+		'destination' => 3
+	])->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate([
+		'type' => 'destination',
+		'name' => 'Brno',
+		'id' => 3
+	])->getErrors()
+);
+
+Assert::same(
+	[
+		"Wrong data type in '/'; expected validity for just one sub-schema:",
+		"- 0: Missing key in '/destination'", // todo: better error message with no fail-fast option
+		"- 1: Missing key in '/id'",
+	],
+	$validator->validate([
+		'type' => 'destination',
+		'name' => 'Brno',
 	])->getErrors()
 );
