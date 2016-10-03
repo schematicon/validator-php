@@ -13,10 +13,14 @@ final class Validator
 {
 	private $schema;
 
+	/** @var bool */
+	private $failFast;
 
-	public function __construct($schema)
+
+	public function __construct($schema, bool $failFast = false)
 	{
 		$this->schema = $schema;
+		$this->failFast = $failFast;
 	}
 
 
@@ -64,7 +68,11 @@ final class Validator
 				$wrongType = Helpers::getVariableType($node);
 				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
 				$errors[] = "Wrong data type in '$wrongPath'; expected '$schema[type]'; got '{$wrongType}'";
-				continue;
+				$isValid = false;
+			}
+
+			if ($isValid === false && $this->failFast) {
+				break;
 			}
 		}
 
@@ -82,6 +90,9 @@ final class Validator
 			} elseif (!isset($keySchema['optional']) || !$keySchema['optional']) {
 				$errors[] = "Missing key in '$path$keyName'";
 				$isValid = false;
+				if ($this->failFast) {
+					break;
+				}
 			}
 		}
 		return $isValid;
@@ -90,13 +101,17 @@ final class Validator
 
 	private function validateItems($node, $schema, $path, & $stack, & $errors)
 	{
+		$isValid = true;
+
 		if (!Helpers::isList($node)) {
 			$wrongType = Helpers::getVariableType($node);
 			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
 			$errors[] = "Wrong data type in '$wrongPath'; expected '$schema[type]'; got '{$wrongType}'";
+			$isValid = false;
+			if ($this->failFast) {
+				return false;
+			}
 		}
-
-		$isValid = true;
 
 		if (isset($schema['max_count'])) {
 			if (count($node) > $schema['max_count']) {
@@ -104,6 +119,9 @@ final class Validator
 				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
 				$errors[] = "Wrong maximum items count in '$wrongPath'; expected '$schema[max_count]'; got '{$wrongCount}'";
 				$isValid = false;
+				if ($this->failFast) {
+					return false;
+				}
 			}
 		}
 
@@ -113,6 +131,9 @@ final class Validator
 				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
 				$errors[] = "Wrong minimum items count in '$wrongPath'; expected '$schema[min_count]'; got '{$wrongCount}'";
 				$isValid = false;
+				if ($this->failFast) {
+					return false;
+				}
 			}
 		}
 
