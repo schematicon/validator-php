@@ -62,8 +62,20 @@ final class Validator
 						$isValid = $this->validateInnerKeys($node, $schema, $path, $stack, $errors);
 						break;
 					}
+				} elseif ($type === 'anyOf') {
+					$isValid = $this->validateAnyOf($node, $schema, $path, $stack, $errors);
+					break;
+
+				} elseif ($type === 'oneOf') {
+					$isValid = $this->validateOneOf($node, $schema, $path, $stack, $errors);
+					break;
+
+				} elseif ($type === 'allOf') {
+					$isValid = $this->validateAllOf($node, $schema, $path, $stack, $errors);
+					break;
 				}
 			}
+
 			if ($isValid === null) {
 				$wrongType = Helpers::getVariableType($node);
 				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
@@ -142,5 +154,82 @@ final class Validator
 		}
 
 		return $isValid;
+	}
+
+
+	private function validateAnyOf($node, $schema, $path, & $stack, & $errors)
+	{
+		$results = [];
+		foreach ($schema['options'] as $optionSchema) {
+			$validator = new Validator($optionSchema, true);
+			$result = $validator->validate($node);
+			if ($result->isValid()) {
+				return true;
+			} else {
+				$results[] = $result;
+			}
+		}
+
+		$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+		$errors[] = "Wrong data type in '$wrongPath'; expected validity at least for one of sub-schemas:";
+		foreach ($results as $resultI => $result) {
+			$errors[] = "- $resultI: " . $result->getErrors()[0];
+		}
+		return false;
+	}
+
+
+	private function validateAllOf($node, $schema, $path, & $stack, & $errors)
+	{
+		$results = [];
+		$validCount = 0;
+		foreach ($schema['options'] as $optionSchema) {
+			$validator = new Validator($optionSchema, true);
+			$results[] = $result = $validator->validate($node);
+			$validCount += $result->isValid() ? 1 : 0;
+		}
+
+		if ($validCount === count($schema['options'])) {
+			return true;
+		}
+
+		$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+		$errors[] = "Wrong data type in '$wrongPath'; expected validity for all sub-schemas; invalid for:";
+		foreach ($results as $resultI => $result) {
+			if (!$result->isValid()) {
+				$errors[] = "- $resultI: " . $result->getErrors()[0];
+			}
+		}
+		return false;
+	}
+
+
+	private function validateOneOf($node, $schema, $path, & $stack, & $errors)
+	{
+		$results = [];
+		$validCount = 0;
+		foreach ($schema['options'] as $optionSchema) {
+			$validator = new Validator($optionSchema, true);
+			$results[] = $result = $validator->validate($node);
+			$validCount += $result->isValid() ? 1 : 0;
+		}
+
+		if ($validCount === 1) {
+			return true;
+
+		} elseif ($validCount === 0) {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$errors[] = "Wrong data type in '$wrongPath'; expected validity for just one sub-schema:";
+			foreach ($results as $resultI => $result) {
+				$errors[] = "- $resultI: " . $result->getErrors()[0];
+			}
+			return false;
+
+		} else {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$indexes = implode(', ', array_keys($results));
+			$errors[] = "Wrong data type in '$wrongPath'; expected validity for only one sub-schema; valid for schemas number: $indexes.";
+			return false;
+		}
 	}
 }
