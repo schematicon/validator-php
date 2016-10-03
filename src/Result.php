@@ -32,6 +32,6 @@ class Result
 
 	public function isValid(): bool
 	{
-		return count($this->errors) > 0;
+		return count($this->errors) === 0;
 	}
 }
