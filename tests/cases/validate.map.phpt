@@ -54,6 +54,14 @@ Assert::same(
 );
 
 Assert::same(
+	[],
+	$validator->validate((object) [
+		'name' => null,
+		'email' => 'jan@skrasek.com',
+	])->getErrors()
+);
+
+Assert::same(
 	["Missing key in '/name'", "Missing key in '/email'"],
 	$validator->validate([])->getErrors()
 );
@@ -93,6 +101,14 @@ Assert::same(
 	$validator->validate([
 		'deep' => ['name' => ''],
 		'another' => null,
+	])->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate([
+		'deep' => ['name' => ''],
+		'another' => new \stdClass(),
 	])->getErrors()
 );
 
