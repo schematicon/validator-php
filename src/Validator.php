@@ -52,12 +52,6 @@ final class Validator
 					array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
 				}
 
-			} elseif ($schema['type'] === 'array') {
-				$isValid = is_array($node) && $this->validateItems($node, $schema, $path, $stack, $errors);
-
-			} elseif ($schema['type'] === 'map') {
-				$isValid = is_array($node) && $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
-
 			} else {
 				$isValid = null;
 				$types = explode('|', $schema['type']);
@@ -87,8 +81,24 @@ final class Validator
 							$isValid = true;
 							break;
 						}
+					} elseif ($type === 'array') {
+						if (is_array($node) && Helpers::isArray($node)) {
+							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
+							if ($isValid) {
+								break;
+							}
+						}
+
+					} elseif ($type === 'map') {
+						if ((is_array($node) || $node instanceof \stdClass) && !Helpers::isArray($node)) {
+							$isValid = $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
+							if ($isValid) {
+								break;
+							}
+						}
 					}
 				}
+
 				if ($isValid === null) {
 					$wrongType = Helpers::getVariableType($node);
 					$wrongPath = $path === '/' ? $path : rtrim($path, '/');
@@ -109,6 +119,7 @@ final class Validator
 	private function validateInnerProperties($node, $schema, $path, & $stack, & $errors)
 	{
 		$isValid = true;
+		$node = (array) $node; // may be a stdClass
 		foreach ($schema['properties'] as $propName => $propSchema) {
 			if (isset($node[$propName]) || array_key_exists($propName, $node)) {
 				$stack[] = [$propSchema, $node[$propName], "$path$propName/"];
@@ -128,16 +139,6 @@ final class Validator
 	private function validateItems($node, $schema, $path, & $stack, & $errors)
 	{
 		$isValid = true;
-
-		if (!Helpers::isList($node)) {
-			$wrongType = Helpers::getVariableType($node);
-			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-			$errors[] = "Wrong data type in '$wrongPath'; expected '$schema[type]'; got '{$wrongType}'";
-			$isValid = false;
-			if ($this->failFast) {
-				return false;
-			}
-		}
 
 		if (isset($schema['max_count'])) {
 			if (count($node) > $schema['max_count']) {

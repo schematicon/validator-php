@@ -78,7 +78,7 @@ Assert::same(
 		"- 0: Missing key in '/name'",
 		"- 1: Missing key in '/age'",
 	],
-	$validator->validate([])->getErrors()
+	$validator->validate((object) [])->getErrors()
 );
 
 Assert::same(

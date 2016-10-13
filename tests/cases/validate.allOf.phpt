@@ -49,7 +49,7 @@ Assert::same(
 		"Wrong data type in '/'; expected validity for all sub-schemas; invalid for:",
 		"- 0: Missing key in '/name'",
 	],
-	$validator->validate([])->getErrors()
+	$validator->validate((object) [])->getErrors()
 );
 
 Assert::same(

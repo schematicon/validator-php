@@ -48,7 +48,7 @@ Assert::same(
 
 Assert::same(
 	[],
-	$validator->validate([])->getErrors()
+	$validator->validate((object) [])->getErrors()
 );
 
 Assert::same(
