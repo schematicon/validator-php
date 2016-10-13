@@ -16,11 +16,15 @@ final class Validator
 	/** @var bool */
 	private $failFast;
 
+	/** @var callable */
+	private $referenceCallback;
 
-	public function __construct($schema, bool $failFast = false)
+
+	public function __construct($schema, bool $failFast = false, callable $referenceCallback = null)
 	{
 		$this->schema = $schema;
 		$this->failFast = $failFast;
+		$this->referenceCallback = $referenceCallback;
 	}
 
 
@@ -30,62 +34,66 @@ final class Validator
 		$stack = [[$this->schema, $data, '/']];
 		while (list ($schema, $node, $path) = array_pop($stack)) {
 			$isValid = null;
-			$types = explode('|', $schema['type']);
-			foreach ($types as $type) {
-				if ($type === 'null') {
-					if ($node === null) {
-						$isValid = true;
+			if (isset($schema['reference']) && is_string($schema['reference'])) {
+				$isValid = $this->validateReference($node, $schema, $path, $stack);
+			} else {
+				$types = explode('|', $schema['type']);
+				foreach ($types as $type) {
+					if ($type === 'null') {
+						if ($node === null) {
+							$isValid = true;
+							break;
+						}
+					} elseif ($type === 'string') {
+						if (is_string($node)) {
+							$isValid = true;
+							break;
+						}
+					} elseif ($type === 'bool') {
+						if (is_bool($node)) {
+							$isValid = true;
+							break;
+						}
+					} elseif ($type === 'int') {
+						if (is_int($node)) {
+							$isValid = true;
+							break;
+						}
+					} elseif ($type === 'float') {
+						if (is_float($node)) {
+							$isValid = true;
+							break;
+						}
+					} elseif ($type === 'array') {
+						if (is_array($node)) {
+							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
+							break;
+						}
+					} elseif ($type === 'map') {
+						if (is_array($node)) {
+							$isValid = $this->validateInnerKeys($node, $schema, $path, $stack, $errors);
+							break;
+						}
+					} elseif ($type === 'const') {
+						$isValid = $node === $schema['value'];
+						if (!$isValid) {
+							$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+							array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
+						}
 						break;
-					}
-				} elseif ($type === 'string') {
-					if (is_string($node)) {
-						$isValid = true;
-						break;
-					}
-				} elseif ($type === 'bool') {
-					if (is_bool($node)) {
-						$isValid = true;
-						break;
-					}
-				} elseif ($type === 'int') {
-					if (is_int($node)) {
-						$isValid = true;
-						break;
-					}
-				} elseif ($type === 'float') {
-					if (is_float($node)) {
-						$isValid = true;
-						break;
-					}
-				} elseif ($type === 'array') {
-					if (is_array($node)) {
-						$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
-						break;
-					}
-				} elseif ($type === 'map') {
-					if (is_array($node)) {
-						$isValid = $this->validateInnerKeys($node, $schema, $path, $stack, $errors);
-						break;
-					}
-				} elseif ($type === 'const') {
-					$isValid = $node === $schema['value'];
-					if (!$isValid) {
-						$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-						array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
-					}
-					break;
 
-				} elseif ($type === 'anyOf') {
-					$isValid = $this->validateAnyOf($node, $schema, $path, $stack, $errors);
-					break;
+					} elseif ($type === 'anyOf') {
+						$isValid = $this->validateAnyOf($node, $schema, $path, $stack, $errors);
+						break;
 
-				} elseif ($type === 'oneOf') {
-					$isValid = $this->validateOneOf($node, $schema, $path, $stack, $errors);
-					break;
+					} elseif ($type === 'oneOf') {
+						$isValid = $this->validateOneOf($node, $schema, $path, $stack, $errors);
+						break;
 
-				} elseif ($type === 'allOf') {
-					$isValid = $this->validateAllOf($node, $schema, $path, $stack, $errors);
-					break;
+					} elseif ($type === 'allOf') {
+						$isValid = $this->validateAllOf($node, $schema, $path, $stack, $errors);
+						break;
+					}
 				}
 			}
 
@@ -244,5 +252,20 @@ final class Validator
 			$errors[] = "Wrong data type in '$wrongPath'; expected validity for only one sub-schema; valid for schemas number: $indexes.";
 			return false;
 		}
+	}
+
+	private function validateReference($node, $schema, $path, & $stack)
+	{
+		$isValid = true;
+		$schemeName = $schema['reference'];
+		if (!is_callable($this->referenceCallback)) {
+			throw new ValidatorException("Missing referenced scheme loader when trying to load: '$schemeName'");
+		}
+		$referencedSchema = call_user_func($this->referenceCallback, $schemeName);
+		if ($referencedSchema === null) {
+			throw new ValidatorException("Can`t load referenced scheme: '$schemeName'");
+		}
+		$stack[] = [$referencedSchema, $node, $path];
+		return $isValid;
 	}
 }

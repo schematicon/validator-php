@@ -19,7 +19,8 @@
 		"tracy/tracy": "~2.4"
 	},
 	"autoload": {
-		"psr-4": { "Nextras\\Schematicon\\": "src/" }
+		"psr-4": { "Nextras\\Schematicon\\": "src/" },
+		"classmap": ["src/exceptions.php"]
 	},
 	"extra": {
 		"branch-alias": {
