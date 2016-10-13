@@ -31,10 +31,11 @@ full:
 				age:
 					type: int|null
 		anyOf:
-			-
-				type: int
-			-
-				type: string
+			anyOf:
+				-
+					type: int
+				-
+					type: string
 
 short:
 	type: map
@@ -51,7 +52,8 @@ short:
 			properties:
 				name: string
 				age: int|null
-		anyOf: [int, string]
+		anyOf:
+			anyOf: [int, string]
 NEON
 );
 

@@ -42,17 +42,18 @@ final class Normalizer
 				$schema['allOf'] = array_map([$this, 'unwrapShortTypes'], $schema['allOf']);
 				return $schema;
 
-			} elseif ($schema['type'] === 'map') {
-				foreach ($schema['properties'] as $propName => $propValue) {
-					$schema['properties'][$propName] = $this->unwrapShortTypes($propValue);
-				}
-				return $schema;
-
-			} elseif ($schema['type'] === 'array') {
-				$schema['item'] = array_map([$this, 'unwrapShortTypes'], $schema['item']);
-				return $schema;
-
 			} else {
+				$types = explode('|', $schema['type']);
+				foreach ($types as $type) {
+					if ($type === 'map') {
+						foreach ($schema['properties'] as $propName => $propValue) {
+							$schema['properties'][$propName] = $this->unwrapShortTypes($propValue);
+						}
+
+					} elseif ($type === 'array') {
+						$schema['item'] = $this->unwrapShortTypes($schema['item']);
+					}
+				}
 				return $schema;
 			}
 		}
