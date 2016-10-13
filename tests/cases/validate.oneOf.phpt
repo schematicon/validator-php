@@ -11,8 +11,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $config = Neon::decode(<<<NEON
 basic:
-	type: oneOf
-	options:
+	oneOf:
 		-
 			type: map
 			properties:
@@ -24,8 +23,7 @@ basic:
 				age:
 					type: int
 advanced:
-	type: oneOf
-	options:
+	oneOf:
 		-
 			type: map
 			properties:

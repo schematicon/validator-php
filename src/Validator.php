@@ -33,10 +33,33 @@ final class Validator
 		$errors = [];
 		$stack = [[$this->schema, $data, '/']];
 		while (list ($schema, $node, $path) = array_pop($stack)) {
-			$isValid = null;
 			if (isset($schema['reference']) && is_string($schema['reference'])) {
-				$isValid = $this->validateReference($node, $schema, $path, $stack);
+				$isValid = $this->validateReference($node, $schema['reference'], $path, $stack);
+
+			} elseif (isset($schema['anyOf'])) {
+				$isValid = $this->validateAnyOf($node, $schema['anyOf'], $path, $errors);
+
+			} elseif (isset($schema['oneOf'])) {
+				$isValid = $this->validateOneOf($node, $schema['oneOf'], $path, $errors);
+
+			} elseif (isset($schema['allOf'])) {
+				$isValid = $this->validateAllOf($node, $schema['allOf'], $path, $errors);
+
+			} elseif ($schema['type'] === 'const') {
+				$isValid = $node === $schema['value'];
+				if (!$isValid) {
+					$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+					array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
+				}
+
+			} elseif ($schema['type'] === 'array') {
+				$isValid = is_array($node) && $this->validateItems($node, $schema, $path, $stack, $errors);
+
+			} elseif ($schema['type'] === 'map') {
+				$isValid = is_array($node) && $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
+
 			} else {
+				$isValid = null;
 				$types = explode('|', $schema['type']);
 				foreach ($types as $type) {
 					if ($type === 'null') {
@@ -64,44 +87,14 @@ final class Validator
 							$isValid = true;
 							break;
 						}
-					} elseif ($type === 'array') {
-						if (is_array($node)) {
-							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
-							break;
-						}
-					} elseif ($type === 'map') {
-						if (is_array($node)) {
-							$isValid = $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
-							break;
-						}
-					} elseif ($type === 'const') {
-						$isValid = $node === $schema['value'];
-						if (!$isValid) {
-							$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-							array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
-						}
-						break;
-
-					} elseif ($type === 'anyOf') {
-						$isValid = $this->validateAnyOf($node, $schema, $path, $stack, $errors);
-						break;
-
-					} elseif ($type === 'oneOf') {
-						$isValid = $this->validateOneOf($node, $schema, $path, $stack, $errors);
-						break;
-
-					} elseif ($type === 'allOf') {
-						$isValid = $this->validateAllOf($node, $schema, $path, $stack, $errors);
-						break;
 					}
 				}
-			}
-
-			if ($isValid === null) {
-				$wrongType = Helpers::getVariableType($node);
-				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-				$errors[] = "Wrong data type in '$wrongPath'; expected '$schema[type]'; got '{$wrongType}'";
-				$isValid = false;
+				if ($isValid === null) {
+					$wrongType = Helpers::getVariableType($node);
+					$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+					$errors[] = "Wrong data type in '$wrongPath'; expected '$schema[type]'; got '{$wrongType}'";
+					$isValid = false;
+				}
 			}
 
 			if ($isValid === false && $this->failFast) {
@@ -178,10 +171,10 @@ final class Validator
 	}
 
 
-	private function validateAnyOf($node, $schema, $path, & $stack, & $errors)
+	private function validateAnyOf($node, $options, $path, & $errors)
 	{
 		$results = [];
-		foreach ($schema['options'] as $optionSchema) {
+		foreach ($options as $optionSchema) {
 			$validator = new Validator($optionSchema, true);
 			$result = $validator->validate($node);
 			if ($result->isValid()) {
@@ -200,17 +193,17 @@ final class Validator
 	}
 
 
-	private function validateAllOf($node, $schema, $path, & $stack, & $errors)
+	private function validateAllOf($node, $options, $path, & $errors)
 	{
 		$results = [];
 		$validCount = 0;
-		foreach ($schema['options'] as $optionSchema) {
+		foreach ($options as $optionSchema) {
 			$validator = new Validator($optionSchema, true);
 			$results[] = $result = $validator->validate($node);
 			$validCount += $result->isValid() ? 1 : 0;
 		}
 
-		if ($validCount === count($schema['options'])) {
+		if ($validCount === count($options)) {
 			return true;
 		}
 
@@ -225,11 +218,11 @@ final class Validator
 	}
 
 
-	private function validateOneOf($node, $schema, $path, & $stack, & $errors)
+	private function validateOneOf($node, $options, $path, & $errors)
 	{
 		$results = [];
 		$validCount = 0;
-		foreach ($schema['options'] as $optionSchema) {
+		foreach ($options as $optionSchema) {
 			$validator = new Validator($optionSchema, true);
 			$results[] = $result = $validator->validate($node);
 			$validCount += $result->isValid() ? 1 : 0;
@@ -254,16 +247,15 @@ final class Validator
 		}
 	}
 
-	private function validateReference($node, $schema, $path, & $stack)
+	private function validateReference($node, $schemaName, $path, & $stack)
 	{
 		$isValid = true;
-		$schemeName = $schema['reference'];
 		if (!is_callable($this->referenceCallback)) {
-			throw new ValidatorException("Missing referenced scheme loader when trying to load: '$schemeName'");
+			throw new ValidatorException("Missing referenced scheme loader when trying to load: '$schemaName'");
 		}
-		$referencedSchema = call_user_func($this->referenceCallback, $schemeName);
+		$referencedSchema = call_user_func($this->referenceCallback, $schemaName);
 		if ($referencedSchema === null) {
-			throw new ValidatorException("Can`t load referenced scheme: '$schemeName'");
+			throw new ValidatorException("Can`t load referenced scheme: '$schemaName'");
 		}
 		$stack[] = [$referencedSchema, $node, $path];
 		return $isValid;

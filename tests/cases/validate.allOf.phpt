@@ -11,8 +11,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $config = Neon::decode(<<<NEON
 basic:
-	type: allOf
-	options:
+	allOf:
 		-
 			type: map
 			properties:
