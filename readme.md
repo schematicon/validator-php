@@ -1,17 +1,19 @@
-Nextras Schematicon
-===================
+Schematicon Validator (PHP)
+===========================
 
-[![Downloads this Month](https://img.shields.io/packagist/dm/nextras/schematicon.svg?style=flat)](https://packagist.org/packages/nextras/schematicon)
-[![Stable version](http://img.shields.io/packagist/v/nextras/schematicon.svg?style=flat)](https://packagist.org/packages/nextras/schematicon)
+[![Downloads this Month](https://img.shields.io/packagist/dm/schematicon/validator.svg?style=flat)](https://packagist.org/packages/schematicon/validator)
+[![Stable version](http://img.shields.io/packagist/v/schematicon/validator.svg?style=flat)](https://packagist.org/packages/schematicon/validator)
 
 ### Installation
 
 Use composer:
 
 ```bash
-$ composer require nextras/schematicon
+$ composer require schematicon/validator
 ```
 
 ### License
 
 MIT. See full [license](license.md).
+
+The development was sponsored by [Sygic Travel](https://travel.sygic.com).

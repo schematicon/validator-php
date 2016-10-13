@@ -1,13 +1,14 @@
 <?php
 
-namespace NextrasTests\Schematicon;
+namespace SchematiconTests;
 
 use Nette\Neon\Neon;
-use Nextras\Schematicon\Validator;
-use Nextras\Schematicon\ValidatorException;
+use Schematicon\Validator\Validator;
+use Schematicon\Validator\ValidatorException;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
+
 
 $config = Neon::decode(<<<NEON
 reference: integer_reference

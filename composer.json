@@ -1,15 +1,15 @@
 {
-	"name": "nextras/schematicon",
+	"name": "schematicon/validator",
 	"type": "library",
-	"description": "Nextras Schemation is validator of various data structures.",
-	"keywords": ["validator", "structure", "schematicon", "nextras"],
-	"homepage": "https://github.com/nextras/schematicon",
+	"description": "Schemation Validator is powerful validator of various data structures.",
+	"keywords": ["validator", "structure", "schematicon"],
+	"homepage": "https://github.com/schematicon/validator-php",
 	"license": "MIT",
 	"authors": [
-		{ "name": "Nextras Project", "homepage": "https://github.com/nextras/schematicon/graphs/contributors" }
+		{ "name": "Nextras Project", "homepage": "https://github.com/schematicon/validator-php/graphs/contributors" }
 	],
 	"support": {
-		"issues": "https://github.com/nextras/schematicon/issues"
+		"issues": "https://github.com/schematicon/validator-php/issues"
 	},
 	"require": {
 	},
@@ -19,7 +19,7 @@
 		"tracy/tracy": "~2.4"
 	},
 	"autoload": {
-		"psr-4": { "Nextras\\Schematicon\\": "src/" },
+		"psr-4": { "Schematicon\\Validator\\": "src/" },
 		"classmap": ["src/exceptions.php"]
 	},
 	"extra": {

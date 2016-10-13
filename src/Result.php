@@ -1,12 +1,12 @@
 <?php
 
 /**
- * This file is part of the Nextras\Schematicon library.
+ * This file is part of the Schematicon library.
  * @license    MIT
- * @link       https://github.com/nextras/schematicon
+ * @link       https://github.com/schematicon/validator-php
  */
 
-namespace Nextras\Schematicon;
+namespace Schematicon\Validator;
 
 
 class Result
