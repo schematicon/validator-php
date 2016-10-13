@@ -1,6 +1,6 @@
 <?php
 
-namespace NextrasTests\Schematicon;
+namespace SchematiconTests;
 
 use Nette\Neon\Neon;
 use Schematicon\Validator\Normalizer;
