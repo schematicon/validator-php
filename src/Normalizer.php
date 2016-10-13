@@ -11,19 +11,15 @@ namespace Schematicon\Validator;
 
 final class Normalizer
 {
-
 	public function normalize($schema)
 	{
 		$schema = $this->unwrapShortTypes($schema);
 		return $schema;
 	}
 
-	private function unwrapShortTypes($schema, $schemaName = null)
-	{
-		if (in_array($schemaName, ['reference'])) {
-			return $schema;
-		}
 
+	private function unwrapShortTypes($schema)
+	{
 		if (is_string($schema)) {
 			return [
 				'type' => $schema
@@ -31,22 +27,33 @@ final class Normalizer
 		}
 
 		if (is_array($schema)) {
-			$types = explode('|', $schema['type']);
-			foreach ($types as $type) {
-				if ($type === 'array') {
-					$schema['item'] = $this->unwrapShortTypes($schema['item']);
-				} elseif ($type === 'map') {
-					foreach ($schema['properties'] as $propName => $propValue) {
-						$schema['properties'][$propName] = $this->unwrapShortTypes($propValue, $propName);
-					}
-				} elseif (in_array($type, ['allOf', 'anyOf', 'oneOf'])) {
-					$options = array_map(function ($option) {
-							return $this->unwrapShortTypes($option);
-						},
-						$schema['options']
-					);
-					$schema['options'] = $options;
+			if (isset($schema['reference'])) {
+				return $schema;
+
+			} elseif (isset($schema['anyOf'])) {
+				$schema['anyOf'] = array_map([$this, 'unwrapShortTypes'], $schema['anyOf']);
+				return $schema;
+
+			} elseif (isset($schema['oneOf'])) {
+				$schema['oneOf'] = array_map([$this, 'unwrapShortTypes'], $schema['oneOf']);
+				return $schema;
+
+			} elseif (isset($schema['allOf'])) {
+				$schema['allOf'] = array_map([$this, 'unwrapShortTypes'], $schema['allOf']);
+				return $schema;
+
+			} elseif ($schema['type'] === 'map') {
+				foreach ($schema['properties'] as $propName => $propValue) {
+					$schema['properties'][$propName] = $this->unwrapShortTypes($propValue);
 				}
+				return $schema;
+
+			} elseif ($schema['type'] === 'array') {
+				$schema['item'] = array_map([$this, 'unwrapShortTypes'], $schema['item']);
+				return $schema;
+
+			} else {
+				return $schema;
 			}
 		}
 
