@@ -13,7 +13,8 @@ $schema = Neon::decode(<<<NEON
 full:
 	type: map
 	properties:
-		reference: some_reference
+		referenced:
+			reference: some_reference
 		int:
 			type: int
 		bool:
@@ -30,17 +31,16 @@ full:
 				age:
 					type: int|null
 		anyOf:
-			type: anyOf
-			options:
-				-
-					type: int
-				-
-					type: string
+			-
+				type: int
+			-
+				type: string
 
 short:
 	type: map
 	properties:
-		reference: some_reference
+		referenced:
+			reference: some_reference
 		int: int
 		bool: bool
 		array:
@@ -51,9 +51,7 @@ short:
 			properties:
 				name: string
 				age: int|null
-		anyOf:
-			type: anyOf
-			options: [int, string]
+		anyOf: [int, string]
 NEON
 );
 
