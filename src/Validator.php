@@ -56,7 +56,10 @@ final class Validator
 				$isValid = null;
 				$types = explode('|', $schema['type']);
 				foreach ($types as $type) {
-					if ($type === 'null') {
+					if ($type === 'any') {
+						$isValid = true;
+						break;
+					} elseif ($type === 'null') {
 						if ($node === null) {
 							$isValid = true;
 							break;
