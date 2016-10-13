@@ -12,6 +12,7 @@
 		"issues": "https://github.com/schematicon/validator-php/issues"
 	},
 	"require": {
+		"php": ">=7.0"
 	},
 	"require-dev": {
 		"nette/neon": "~2.4",
