@@ -12,22 +12,22 @@ require_once __DIR__ . '/../bootstrap.php';
 $config = Neon::decode(<<<NEON
 basic:
 	type: map
-	keys:
+	properties:
 		name:
 			type: string|null
 		email:
 			type: string
 advanced:
 	type: map
-	keys:
+	properties:
 		deep:
 			type: map
-			keys:
+			properties:
 				name: 
 					type: string|null
 		another:
 			type: map
-			keys:
+			properties:
 				name:
 					type: string
 					optional: true

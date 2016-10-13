@@ -15,12 +15,12 @@ basic:
 	options:
 		-
 			type: map
-			keys:
+			properties:
 				name:
 					type: string
 		-
 			type: map
-			keys:
+			properties:
 				age:
 					type: int
 advanced:
@@ -28,7 +28,7 @@ advanced:
 	options:
 		-
 			type: map
-			keys:
+			properties:
 				type:
 					type: const
 					value: poi
@@ -38,7 +38,7 @@ advanced:
 					type: int
 		-
 			type: map
-			keys:
+			properties:
 				type:
 					type: const
 					value: destination

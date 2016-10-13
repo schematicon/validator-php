@@ -19,16 +19,16 @@ basic:
 			type: string
 		-
 			type: map
-			keys:
+			properties:
 				name:
 					type: string
 					optional: true
 		-
 			type: map
-			keys:
+			properties:
 				person:
 					type: map
-					keys:
+					properties:
 						age:
 							type: int
 NEON

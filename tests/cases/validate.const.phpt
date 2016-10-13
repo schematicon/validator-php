@@ -15,7 +15,7 @@ basic:
 	value: 1
 advanced:
 	type: map
-	keys:
+	properties:
 		name:
 			type: const
 			value: jan

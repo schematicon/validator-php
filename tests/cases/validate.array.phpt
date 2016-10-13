@@ -20,7 +20,7 @@ advanced:
 	max_count: 3
 	item:
 		type: map
-		keys:
+		properties:
 			name:
 				type: string|null
 NEON

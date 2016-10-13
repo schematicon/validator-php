@@ -18,9 +18,9 @@ final class Normalizer
 		return $schema;
 	}
 
-	private function unwrapShortTypes($schema, $keyName = null)
+	private function unwrapShortTypes($schema, $schemaName = null)
 	{
-		if (in_array($keyName, ['reference'])) {
+		if (in_array($schemaName, ['reference'])) {
 			return $schema;
 		}
 
@@ -36,8 +36,8 @@ final class Normalizer
 				if ($type === 'array') {
 					$schema['item'] = $this->unwrapShortTypes($schema['item']);
 				} elseif ($type === 'map') {
-					foreach ($schema['keys'] as $keyName => $keyValue) {
-						$schema['keys'][$keyName] = $this->unwrapShortTypes($keyValue, $keyName);
+					foreach ($schema['properties'] as $propName => $propValue) {
+						$schema['properties'][$propName] = $this->unwrapShortTypes($propValue, $propName);
 					}
 				} elseif (in_array($type, ['allOf', 'anyOf', 'oneOf'])) {
 					$options = array_map(function ($option) {

@@ -12,7 +12,7 @@ require_once __DIR__ . '/../bootstrap.php';
 $schema = Neon::decode(<<<NEON
 full:
 	type: map
-	keys:
+	properties:
 		reference: some_reference
 		int:
 			type: int
@@ -24,7 +24,7 @@ full:
 				type: bool|null
 		map:
 			type: map|null
-			keys:
+			properties:
 				name:
 					type: string
 				age:
@@ -39,7 +39,7 @@ full:
 
 short:
 	type: map
-	keys:
+	properties:
 		reference: some_reference
 		int: int
 		bool: bool
@@ -48,7 +48,7 @@ short:
 			item: bool|null
 		map:
 			type: map|null
-			keys:
+			properties:
 				name: string
 				age: int|null
 		anyOf:

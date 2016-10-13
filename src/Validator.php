@@ -71,7 +71,7 @@ final class Validator
 						}
 					} elseif ($type === 'map') {
 						if (is_array($node)) {
-							$isValid = $this->validateInnerKeys($node, $schema, $path, $stack, $errors);
+							$isValid = $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
 							break;
 						}
 					} elseif ($type === 'const') {
@@ -113,15 +113,15 @@ final class Validator
 	}
 
 
-	private function validateInnerKeys($node, $schema, $path, & $stack, & $errors)
+	private function validateInnerProperties($node, $schema, $path, & $stack, & $errors)
 	{
 		$isValid = true;
-		foreach ($schema['keys'] as $keyName => $keySchema) {
-			if (isset($node[$keyName]) || array_key_exists($keyName, $node)) {
-				$stack[] = [$keySchema, $node[$keyName], "$path$keyName/"];
+		foreach ($schema['properties'] as $propName => $propSchema) {
+			if (isset($node[$propName]) || array_key_exists($propName, $node)) {
+				$stack[] = [$propSchema, $node[$propName], "$path$propName/"];
 
-			} elseif (!isset($keySchema['optional']) || !$keySchema['optional']) {
-				$errors[] = "Missing key in '$path$keyName'";
+			} elseif (!isset($propSchema['optional']) || !$propSchema['optional']) {
+				$errors[] = "Missing key in '$path$propName'";
 				$isValid = false;
 				if ($this->failFast) {
 					break;

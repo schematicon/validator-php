@@ -15,12 +15,12 @@ basic:
 	options:
 		-
 			type: map
-			keys:
+			properties:
 				name:
 					type: string
 		-
 			type: map
-			keys:
+			properties:
 				age:
 					type: int
 					optional: true
