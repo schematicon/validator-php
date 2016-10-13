@@ -23,6 +23,7 @@ class Helpers
 			'NULL' => 'null',
 			'integer' => 'int',
 			'double' => 'float',
+			'boolean' => 'bool',
 		];
 
 		$type = gettype($var);

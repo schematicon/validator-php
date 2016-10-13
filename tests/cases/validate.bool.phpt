@@ -11,9 +11,9 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $config = Neon::decode(<<<NEON
 basic:
-	type: int
+	type: bool
 nullable:
-	type: int|null
+	type: bool|null
 NEON
 );
 
@@ -22,27 +22,27 @@ $validator = new Validator($config['basic']);
 
 Assert::same(
 	[],
+	$validator->validate(true)->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate(false)->getErrors()
+);
+
+Assert::same(
+	["Wrong data type in '/'; expected 'bool'; got 'int'"],
 	$validator->validate(1)->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'float'"],
-	$validator->validate(1.0)->getErrors()
-);
-
-Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'string'"],
+	["Wrong data type in '/'; expected 'bool'; got 'string'"],
 	$validator->validate("string")->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'array'"],
+	["Wrong data type in '/'; expected 'bool'; got 'array'"],
 	$validator->validate([])->getErrors()
-);
-
-Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'bool'"],
-	$validator->validate(true)->getErrors()
 );
 
 
@@ -57,6 +57,6 @@ Assert::same(
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int|null'; got 'array'"],
+	["Wrong data type in '/'; expected 'bool|null'; got 'array'"],
 	$validator->validate([])->getErrors()
 );

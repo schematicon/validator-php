@@ -42,6 +42,11 @@ final class Validator
 						$isValid = true;
 						break;
 					}
+				} elseif ($type === 'bool') {
+					if (is_bool($node)) {
+						$isValid = true;
+						break;
+					}
 				} elseif ($type === 'int') {
 					if (is_int($node)) {
 						$isValid = true;
