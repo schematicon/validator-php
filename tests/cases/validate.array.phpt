@@ -14,6 +14,10 @@ basic:
 	type: array
 	item:
 		type: int
+nullable:
+	type: array|null
+	item:
+		type: int
 advanced:
 	type: array
 	min_count: 1
@@ -44,6 +48,21 @@ Assert::same(
 	$validator->validate([1 => 2])->getErrors()
 );
 
+// =====================================================================================================================
+
+
+$validator = new Validator($config['nullable']);
+
+Assert::same(
+	[],
+	$validator->validate([1, 2, 4])->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate(null)->getErrors()
+);
+
 
 // =====================================================================================================================
 
@@ -57,6 +76,7 @@ Assert::same(
 		['name' => null],
 	])->getErrors()
 );
+
 
 Assert::same(
 	["Wrong maximum items count in '/'; expected '3'; got '4'"],

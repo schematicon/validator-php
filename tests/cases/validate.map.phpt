@@ -26,7 +26,7 @@ advanced:
 				name: 
 					type: string|null
 		another:
-			type: map
+			type: map|null
 			properties:
 				name:
 					type: string
@@ -85,6 +85,14 @@ Assert::same(
 	$validator->validate([
 		'deep' => ['name' => ''],
 		'another' => ['name' => ''],
+	])->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate([
+		'deep' => ['name' => ''],
+		'another' => null,
 	])->getErrors()
 );
 
