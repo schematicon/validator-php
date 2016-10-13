@@ -3,7 +3,7 @@
 namespace NextrasTests\Schematicon;
 
 use Nette\Neon\Neon;
-use Nextras\Schematicon\Normalizer;
+use Schematicon\Validator\Normalizer;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';

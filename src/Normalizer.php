@@ -6,7 +6,7 @@
  * @link       https://github.com/nextras/schematicon
  */
 
-namespace Nextras\Schematicon;
+namespace Schematicon\Validator;
 
 
 final class Normalizer
