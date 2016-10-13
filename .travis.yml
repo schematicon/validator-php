@@ -1,0 +1,29 @@
+language: php
+php:
+    - 7.0
+    - 7.1
+
+matrix:
+    fast_finish: true
+
+sudo: false
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+        - vendor
+
+before_script:
+    # Install Nette Tester
+    - phpenv config-rm xdebug.ini || true
+    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then composer require --dev jakub-onderka/php-parallel-lint:~0.9.2; fi
+    - travis_retry composer update --no-interaction --prefer-source
+
+script:
+    - ./vendor/bin/tester -s ./tests/cases
+    - if [ "$TRAVIS_PHP_VERSION" == "7.1" ]; then vendor/bin/parallel-lint src tests/cases; fi
+
+after_failure:
+    # Print *.actual content & log content
+    - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
+    - for i in $(find tests -name \*.log); do echo "--- $i"; cat $i; echo; echo; done
