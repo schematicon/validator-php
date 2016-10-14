@@ -84,6 +84,11 @@ final class Validator
 							$isValid = true;
 							break;
 						}
+					} elseif ($type === 'regexp') {
+						if (is_string($node) && preg_match($schema['value'], $node) === 1) {
+							$isValid = true;
+							break;
+						}
 					} elseif ($type === 'array') {
 						if (is_array($node) && Helpers::isArray($node)) {
 							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
