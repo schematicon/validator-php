@@ -24,6 +24,7 @@ class Helpers
 			'integer' => 'int',
 			'double' => 'float',
 			'boolean' => 'bool',
+			'object' => 'map',
 		];
 
 		$type = gettype($var);

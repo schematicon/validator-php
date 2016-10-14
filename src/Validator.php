@@ -89,6 +89,11 @@ final class Validator
 							$isValid = true;
 							break;
 						}
+					} elseif ($type === 'enum') {
+						if (!(is_array($node) || $node instanceof \stdClass) && in_array($node, $schema['values'], true)) {
+							$isValid = true;
+							break;
+						}
 					} elseif ($type === 'array') {
 						if (is_array($node) && Helpers::isArray($node)) {
 							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
@@ -108,8 +113,8 @@ final class Validator
 				}
 
 				if ($isValid === null) {
-					$wrongType = Helpers::getVariableType($node);
 					$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+					$wrongType = Helpers::getVariableType($node);
 					$errors[] = "Wrong data type in '$wrongPath'; expected '$schema[type]'; got '{$wrongType}'";
 					$isValid = false;
 				}
