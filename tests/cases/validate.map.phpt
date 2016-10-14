@@ -31,6 +31,11 @@ advanced:
 				name:
 					type: string
 					optional: true
+regexp:
+	type: map
+	regexp_properties:
+		'.+':
+			type: int|string
 NEON
 );
 
@@ -117,5 +122,27 @@ Assert::same(
 	$validator->validate([
 		'deep' => (object) [],
 		'another' => (object) [],
+	])->getErrors()
+);
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator($config['regexp']);
+
+Assert::same(
+	[],
+	$validator->validate([
+		'prop1' => 'string',
+		'prop2' => 2,
+	])->getErrors()
+);
+
+Assert::same(
+	["Wrong data type in '/.+'; expected 'int|string'; got 'bool'"],
+	$validator->validate([
+		'prop1' => 'string',
+		'prop2' => false,
 	])->getErrors()
 );

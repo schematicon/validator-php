@@ -128,7 +128,7 @@ final class Validator
 	{
 		$isValid = true;
 		$node = (array) $node; // may be a stdClass
-		foreach ($schema['properties'] as $propName => $propSchema) {
+		foreach ($schema['properties'] ?? [] as $propName => $propSchema) {
 			if (isset($node[$propName]) || array_key_exists($propName, $node)) {
 				$stack[] = [$propSchema, $node[$propName], "$path$propName/"];
 
@@ -140,6 +140,17 @@ final class Validator
 				}
 			}
 		}
+		foreach ($schema['regexp_properties'] ?? [] as $propName => $propSchema) {
+			$expression = "~$propName~";
+			foreach ($node as $nodeKey => $nodeValue) {
+				if (preg_match($expression, $nodeKey) !== 1) {
+					continue;
+				}
+
+				$stack[] = [$propSchema, $nodeValue, "$path$propName/"];
+			}
+		}
+
 		return $isValid;
 	}
 
