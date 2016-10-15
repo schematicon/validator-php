@@ -6,7 +6,7 @@ oneOf:
 				type: array
 				item:
 					reference: '#'
-				min_items: 1
+				minCount: 1
 	- #anyOf
 		type: map
 		properties:
@@ -14,7 +14,7 @@ oneOf:
 				type: array
 				item:
 					reference: '#'
-				min_items: 1
+				minCount: 1
 	- #oneOf
 		type: map
 		properties:
@@ -22,7 +22,7 @@ oneOf:
 				type: array
 				item:
 					reference: '#'
-				min_items: 1
+				minCount: 1
 	- #reference
 		type: map
 		properties:
@@ -40,7 +40,7 @@ oneOf:
 						value: '~map~'
 					properties:
 						type: map
-						regexp_properties:
+						regexpProperties:
 							'.+':
 								reference: '#'
 			- #map.regexp_properties
@@ -49,9 +49,9 @@ oneOf:
 					type:
 						type: regexp
 						value: '~map~'
-					regexp_properties:
+					regexpProperties:
 						type: map
-						regexp_properties:
+						regexpProperties:
 							'.+':
 								reference: '#'
 			- #array
@@ -62,10 +62,10 @@ oneOf:
 						value: '~array~'
 					item:
 						reference: '#'
-					max_count:
+					maxCount:
 						type: int
 						optional: true
-					min_count:
+					minCount:
 						type: int
 						optional: true
 			- #any|null|string|bool|int|float

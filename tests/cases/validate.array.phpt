@@ -20,8 +20,8 @@ nullable:
 		type: int
 advanced:
 	type: array
-	min_count: 1
-	max_count: 3
+	minCount: 1
+	maxCount: 3
 	item:
 		type: map
 		properties:

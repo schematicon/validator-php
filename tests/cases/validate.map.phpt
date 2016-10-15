@@ -33,7 +33,7 @@ advanced:
 					optional: true
 regexp:
 	type: map
-	regexp_properties:
+	regexpProperties:
 		'.+':
 			type: int|string
 NEON

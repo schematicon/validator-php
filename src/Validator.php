@@ -145,7 +145,7 @@ final class Validator
 				}
 			}
 		}
-		foreach ($schema['regexp_properties'] ?? [] as $propName => $propSchema) {
+		foreach ($schema['regexpProperties'] ?? [] as $propName => $propSchema) {
 			$expression = "~$propName~";
 			foreach ($node as $nodeKey => $nodeValue) {
 				if (preg_match($expression, $nodeKey) !== 1) {
@@ -164,11 +164,11 @@ final class Validator
 	{
 		$isValid = true;
 
-		if (isset($schema['max_count'])) {
-			if (count($node) > $schema['max_count']) {
+		if (isset($schema['maxCount'])) {
+			if (count($node) > $schema['maxCount']) {
 				$wrongCount = count($node);
 				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-				$errors[] = "Wrong maximum items count in '$wrongPath'; expected '$schema[max_count]'; got '{$wrongCount}'";
+				$errors[] = "Wrong maximum items count in '$wrongPath'; expected '$schema[maxCount]'; got '{$wrongCount}'";
 				$isValid = false;
 				if ($this->failFast) {
 					return false;
@@ -176,11 +176,11 @@ final class Validator
 			}
 		}
 
-		if (isset($schema['min_count'])) {
-			if (count($node) < $schema['min_count']) {
+		if (isset($schema['minCount'])) {
+			if (count($node) < $schema['minCount']) {
 				$wrongCount = count($node);
 				$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-				$errors[] = "Wrong minimum items count in '$wrongPath'; expected '$schema[min_count]'; got '{$wrongCount}'";
+				$errors[] = "Wrong minimum items count in '$wrongPath'; expected '$schema[minCount]'; got '{$wrongCount}'";
 				$isValid = false;
 				if ($this->failFast) {
 					return false;
