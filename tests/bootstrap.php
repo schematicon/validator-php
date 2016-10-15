@@ -25,5 +25,5 @@ function prepareSchema(array $schema): array
 	if (!$validator->validate($schema)->isValid()) {
 		throw new \RuntimeException('Invalid schema for testing');
 	}
-	return $schema;
+	return $normalizer->normalize($schema);
 }

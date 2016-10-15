@@ -31,6 +31,7 @@ advanced:
 				name:
 					type: string
 					optional: true
+				?surname: string
 regexp:
 	type: map
 	regexpProperties:
@@ -112,7 +113,7 @@ Assert::same(
 Assert::same(
 	[],
 	$validator->validate([
-		'deep' => ['name' => ''],
+		'deep' => ['name' => '', 'surname' => ''],
 		'another' => (object) [],
 	])->getErrors()
 );
@@ -122,6 +123,14 @@ Assert::same(
 	$validator->validate([
 		'deep' => (object) [],
 		'another' => (object) [],
+	])->getErrors()
+);
+
+Assert::same(
+	["Wrong data type in '/another/surname'; expected 'string'; got 'int'"],
+	$validator->validate([
+		'deep' => ['name' => ''],
+		'another' => ['surname' => 3],
 	])->getErrors()
 );
 
