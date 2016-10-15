@@ -46,8 +46,11 @@ final class Normalizer
 				$types = explode('|', $schema['type']);
 				foreach ($types as $type) {
 					if ($type === 'map') {
-						foreach ($schema['properties'] as $propName => $propValue) {
+						foreach ($schema['properties'] ?? [] as $propName => $propValue) {
 							$schema['properties'][$propName] = $this->unwrapShortTypes($propValue);
+						}
+						foreach ($schema['regexp_properties'] ?? [] as $propName => $propValue) {
+							$schema['regexp_properties'][$propName] = $this->unwrapShortTypes($propValue);
 						}
 
 					} elseif ($type === 'array') {
