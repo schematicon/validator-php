@@ -68,12 +68,12 @@ oneOf:
 					min_count:
 						type: int
 						optional: true
-			- #string|bool|int|float|null
+			- #any|null|string|bool|int|float
 				type: map
 				properties:
 					type:
 						type: regexp
-						value: '~^(any|null|string|bool|int|float|regexp|array|map)(\|(any|null|string|bool|int|float|regexp|array|map))*$~'
+						value: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
 			- #const
 				type: map
 				properties:
@@ -88,3 +88,12 @@ oneOf:
 						type: regexp
 						value: '~regexp~'
 					value: string
+			- #enum
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~enum~'
+					values:
+						type: array
+						item: null|string|bool|int|float
