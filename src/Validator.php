@@ -138,7 +138,7 @@ final class Validator
 				$stack[] = [$propSchema, $node[$propName], "$path$propName/"];
 
 			} elseif (!isset($propSchema['optional']) || !$propSchema['optional']) {
-				$errors[] = "Missing key in '$path$propName'";
+				$errors[] = "Missing '$propName' key in '$path' path";
 				$isValid = false;
 				if ($this->failFast) {
 					break;

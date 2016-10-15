@@ -67,7 +67,7 @@ Assert::same(
 );
 
 Assert::same(
-	["Missing key in '/name'", "Missing key in '/email'"],
+	["Missing 'name' key in '/' path", "Missing 'email' key in '/' path"],
 	$validator->validate((object) [])->getErrors()
 );
 
@@ -118,7 +118,7 @@ Assert::same(
 );
 
 Assert::same(
-	["Missing key in '/deep/name'"],
+	["Missing 'name' key in '/deep/' path"],
 	$validator->validate([
 		'deep' => (object) [],
 		'another' => (object) [],

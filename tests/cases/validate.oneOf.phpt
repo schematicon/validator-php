@@ -75,8 +75,8 @@ Assert::same(
 Assert::same(
 	[
 		"Wrong data type in '/'; expected validity for just one sub-schema:",
-		"- 0: Missing key in '/name'",
-		"- 1: Missing key in '/age'",
+		"- 0: Missing 'name' key in '/' path",
+		"- 1: Missing 'age' key in '/' path",
 	],
 	$validator->validate((object) [])->getErrors()
 );
@@ -118,8 +118,8 @@ Assert::same(
 Assert::same(
 	[
 		"Wrong data type in '/'; expected validity for just one sub-schema:",
-		"- 0: Missing key in '/destination'", // todo: better error message with no fail-fast option
-		"- 1: Missing key in '/id'",
+		"- 0: Missing 'destination' key in '/' path", // todo: better error message with no fail-fast option
+		"- 1: Missing 'id' key in '/' path",
 	],
 	$validator->validate([
 		'type' => 'destination',
