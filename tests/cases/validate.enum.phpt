@@ -20,7 +20,7 @@ NEON
 );
 
 
-$validator = new Validator($config['basic']);
+$validator = new Validator(prepareSchema($config['basic']));
 
 Assert::same(
 	[],
@@ -74,7 +74,7 @@ Assert::same(
 // =====================================================================================================================
 
 
-$validator = new Validator($config['nullable']);
+$validator = new Validator(prepareSchema($config['nullable']));
 
 Assert::same(
 	[],

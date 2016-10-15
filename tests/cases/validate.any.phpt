@@ -16,7 +16,7 @@ NEON
 );
 
 
-$validator = new Validator($config['basic']);
+$validator = new Validator(prepareSchema($config['basic']));
 
 Assert::same(
 	[],

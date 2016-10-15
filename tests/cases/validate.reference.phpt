@@ -21,8 +21,8 @@ NEON
 );
 
 
-$validator = new Validator($config, false, function () use ($referencedConfig) {
-	return $referencedConfig;
+$validator = new Validator(prepareSchema($config), false, function () use ($referencedConfig) {
+	return prepareSchema($referencedConfig);
 });
 
 Assert::same(
