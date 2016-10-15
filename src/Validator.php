@@ -200,7 +200,7 @@ final class Validator
 	{
 		$results = [];
 		foreach ($options as $optionSchema) {
-			$validator = new Validator($optionSchema, true);
+			$validator = new Validator($optionSchema, true, $this->referenceCallback);
 			$result = $validator->validate($node);
 			if ($result->isValid()) {
 				return true;
@@ -223,7 +223,7 @@ final class Validator
 		$results = [];
 		$validCount = 0;
 		foreach ($options as $optionSchema) {
-			$validator = new Validator($optionSchema, true);
+			$validator = new Validator($optionSchema, true, $this->referenceCallback);
 			$results[] = $result = $validator->validate($node);
 			$validCount += $result->isValid() ? 1 : 0;
 		}
@@ -248,7 +248,7 @@ final class Validator
 		$results = [];
 		$validCount = 0;
 		foreach ($options as $optionSchema) {
-			$validator = new Validator($optionSchema, true);
+			$validator = new Validator($optionSchema, true, $this->referenceCallback);
 			$results[] = $result = $validator->validate($node);
 			$validCount += $result->isValid() ? 1 : 0;
 		}
