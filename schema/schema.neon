@@ -1,0 +1,90 @@
+oneOf:
+	- #allOf
+		type: map
+		properties:
+			allOf:
+				type: array
+				item:
+					reference: '#'
+				min_items: 1
+	- #anyOf
+		type: map
+		properties:
+			anyOf:
+				type: array
+				item:
+					reference: '#'
+				min_items: 1
+	- #oneOf
+		type: map
+		properties:
+			oneOf:
+				type: array
+				item:
+					reference: '#'
+				min_items: 1
+	- #reference
+		type: map
+		properties:
+			reference: string
+	- #direct types
+		type: regexp
+		value: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
+	- #types
+		anyOf:
+			- #map.properties
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~map~'
+					properties:
+						type: map
+						regexp_properties:
+							'.+':
+								reference: '#'
+			- #map.regexp_properties
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~map~'
+					regexp_properties:
+						type: map
+						regexp_properties:
+							'.+':
+								reference: '#'
+			- #array
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~array~'
+					item:
+						reference: '#'
+					max_count:
+						type: int
+						optional: true
+					min_count:
+						type: int
+						optional: true
+			- #string|bool|int|float|null
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~^(any|null|string|bool|int|float|regexp|array|map)(\|(any|null|string|bool|int|float|regexp|array|map))*$~'
+			- #const
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~const~'
+					value: null|string|bool|int|float
+			- #regexp
+				type: map
+				properties:
+					type:
+						type: regexp
+						value: '~regexp~'
+					value: string
