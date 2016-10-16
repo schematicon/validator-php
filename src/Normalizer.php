@@ -9,7 +9,7 @@
 namespace Schematicon\Validator;
 
 
-final class Normalizer
+class Normalizer
 {
 	public function normalize($schema)
 	{

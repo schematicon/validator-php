@@ -9,8 +9,9 @@
 namespace Schematicon\Validator;
 
 
-final class Validator
+class Validator
 {
+	/** @var array */
 	private $schema;
 
 	/** @var bool */
@@ -20,7 +21,7 @@ final class Validator
 	private $referenceCallback;
 
 
-	public function __construct($schema, bool $failFast = false, callable $referenceCallback = null)
+	public function __construct(array $schema, bool $failFast = false, callable $referenceCallback = null)
 	{
 		$this->schema = $schema;
 		$this->failFast = $failFast;
@@ -28,7 +29,7 @@ final class Validator
 	}
 
 
-	public function validate($data)
+	public function validate($data): Result
 	{
 		$errors = [];
 		$stack = [[$this->schema, $data, '/']];
@@ -128,7 +129,7 @@ final class Validator
 	}
 
 
-	private function validateInnerProperties($node, $schema, $path, & $stack, & $errors)
+	private function validateInnerProperties($node, array $schema, string $path, array & $stack, array & $errors): bool
 	{
 		$isValid = true;
 		$node = (array) $node; // may be a stdClass
@@ -159,7 +160,7 @@ final class Validator
 	}
 
 
-	private function validateItems($node, $schema, $path, & $stack, & $errors)
+	private function validateItems($node, array $schema, string $path, array & $stack, array & $errors): bool
 	{
 		$isValid = true;
 
@@ -195,7 +196,7 @@ final class Validator
 	}
 
 
-	private function validateAnyOf($node, $options, $path, & $errors)
+	private function validateAnyOf($node, array $options, string $path, array & $errors): bool
 	{
 		$results = [];
 		foreach ($options as $optionSchema) {
@@ -217,7 +218,7 @@ final class Validator
 	}
 
 
-	private function validateAllOf($node, $options, $path, & $errors)
+	private function validateAllOf($node, array $options, string $path, array & $errors): bool
 	{
 		$results = [];
 		$validCount = 0;
@@ -242,7 +243,7 @@ final class Validator
 	}
 
 
-	private function validateOneOf($node, $options, $path, & $errors)
+	private function validateOneOf($node, array $options, string $path, array & $errors): bool
 	{
 		$results = [];
 		$validCount = 0;
@@ -271,7 +272,8 @@ final class Validator
 		}
 	}
 
-	private function validateReference($node, $schemaName, $path, & $stack)
+
+	private function validateReference($node, string $schemaName, string $path, array & $stack): bool
 	{
 		$isValid = true;
 		if (!is_callable($this->referenceCallback)) {
