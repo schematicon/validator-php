@@ -11,14 +11,7 @@ namespace Schematicon\Validator;
 
 class Normalizer
 {
-	public function normalize($schema)
-	{
-		$schema = $this->unwrapShortTypes($schema);
-		return $schema;
-	}
-
-
-	private function unwrapShortTypes($schema)
+	public function normalize($schema): array
 	{
 		if (is_string($schema)) {
 			return [
@@ -31,15 +24,15 @@ class Normalizer
 				return $schema;
 
 			} elseif (isset($schema['anyOf'])) {
-				$schema['anyOf'] = array_map([$this, 'unwrapShortTypes'], $schema['anyOf']);
+				$schema['anyOf'] = array_map([$this, 'normalize'], $schema['anyOf']);
 				return $schema;
 
 			} elseif (isset($schema['oneOf'])) {
-				$schema['oneOf'] = array_map([$this, 'unwrapShortTypes'], $schema['oneOf']);
+				$schema['oneOf'] = array_map([$this, 'normalize'], $schema['oneOf']);
 				return $schema;
 
 			} elseif (isset($schema['allOf'])) {
-				$schema['allOf'] = array_map([$this, 'unwrapShortTypes'], $schema['allOf']);
+				$schema['allOf'] = array_map([$this, 'normalize'], $schema['allOf']);
 				return $schema;
 
 			} else {
@@ -48,7 +41,7 @@ class Normalizer
 					if ($type === 'map') {
 						$properties = [];
 						foreach ($schema['properties'] ?? [] as $propName => $propValue) {
-							$propValue = $this->unwrapShortTypes($propValue);
+							$propValue = $this->normalize($propValue);
 							if (($propName[0] ?? '') === '?') {
 								$propName = substr($propName, 1);
 								$propValue['optional'] = true;
@@ -57,11 +50,11 @@ class Normalizer
 						}
 						$schema['properties'] = $properties;
 						foreach ($schema['regexp_properties'] ?? [] as $propName => $propValue) {
-							$schema['regexp_properties'][$propName] = $this->unwrapShortTypes($propValue);
+							$schema['regexp_properties'][$propName] = $this->normalize($propValue);
 						}
 
 					} elseif ($type === 'array') {
-						$schema['item'] = $this->unwrapShortTypes($schema['item']);
+						$schema['item'] = $this->normalize($schema['item']);
 					}
 				}
 				return $schema;
