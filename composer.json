@@ -6,7 +6,7 @@
 	"homepage": "https://github.com/schematicon/validator-php",
 	"license": "MIT",
 	"authors": [
-		{ "name": "Nextras Project", "homepage": "https://github.com/schematicon/validator-php/graphs/contributors" }
+		{ "name": "Schematicon Project", "homepage": "https://github.com/schematicon/validator-php/graphs/contributors" }
 	],
 	"support": {
 		"issues": "https://github.com/schematicon/validator-php/issues"
