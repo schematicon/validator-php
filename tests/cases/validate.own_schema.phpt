@@ -50,7 +50,7 @@ Assert::same(
 	[],
 	$validator->validate([
 		'type' => 'map',
-		'regexp_properties' => [
+		'regexpProperties' => [
 			'name' => ['type' => 'string'],
 		],
 		'properties' => [
@@ -62,8 +62,8 @@ Assert::same(
 Assert::same(
 	[],
 	$validator->validate([
-		'type' => 'regexp',
-		'value' => '.+',
+		'type' => 'string',
+		'regexp' => '.+',
 	])->getErrors()
 );
 

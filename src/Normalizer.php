@@ -27,7 +27,7 @@ final class Normalizer
 		}
 
 		if (is_array($schema)) {
-			if (isset($schema['reference'])) {
+			if (isset($schema['reference']) || isset($schema['enum'])) {
 				return $schema;
 
 			} elseif (isset($schema['anyOf'])) {

@@ -11,11 +11,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $config = Neon::decode(<<<NEON
 basic:
-	type: enum
-	values: [1, 'test', true, null]
-nullable:
-	type: enum|null
-	values: [1, 'test', true]
+	enum: [1, 'test', true, null]
 NEON
 );
 
@@ -45,39 +41,26 @@ Assert::same(
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'enum'; got 'bool'"],
+	["Wrong value in '/'; expected value from [1,\"test\",true,null]; got type 'bool'"],
 	$validator->validate(false)->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'enum'; got 'array'"],
+	["Wrong value in '/'; expected value from [1,\"test\",true,null]; got type 'array'"],
 	$validator->validate([])->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'enum'; got 'map'"],
+	["Wrong value in '/'; expected value from [1,\"test\",true,null]; got type 'map'"],
 	$validator->validate((object) [])->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'enum'; got 'string'"],
+	["Wrong value in '/'; expected value from [1,\"test\",true,null]; got type 'string'"],
 	$validator->validate('wrong')->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'enum'; got 'int'"],
+	["Wrong value in '/'; expected value from [1,\"test\",true,null]; got type 'int'"],
 	$validator->validate(2)->getErrors()
 );
-
-
-
-// =====================================================================================================================
-
-
-$validator = new Validator(prepareSchema($config['nullable']));
-
-Assert::same(
-	[],
-	$validator->validate(null)->getErrors()
-);
-

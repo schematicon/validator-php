@@ -28,8 +28,7 @@ advanced:
 			type: map
 			properties:
 				type:
-					type: const
-					value: poi
+					enum: [poi]
 				name:
 					type: string
 				destination:
@@ -38,8 +37,7 @@ advanced:
 			type: map
 			properties:
 				type:
-					type: const
-					value: destination
+					enum: [destination]
 				name:
 					type: string
 				id:

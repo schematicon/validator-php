@@ -27,28 +27,34 @@ oneOf:
 		type: map
 		properties:
 			reference: string
+	- #enum
+		type: map
+		properties:
+			enum:
+				type: array
+				item: null|string|bool|int|float
 	- #direct types
-		type: regexp
-		value: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
+		type: string
+		regexp: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
 	- #types
 		anyOf:
 			- #map.properties
 				type: map
 				properties:
 					type:
-						type: regexp
-						value: '~map~'
+						type: string
+						regexp: '~map~'
 					properties:
 						type: map
 						regexpProperties:
 							'.+':
 								reference: '#'
-			- #map.regexp_properties
+			- #map.regexpProperties
 				type: map
 				properties:
 					type:
-						type: regexp
-						value: '~map~'
+						type: string
+						regexp: '~map~'
 					regexpProperties:
 						type: map
 						regexpProperties:
@@ -58,8 +64,8 @@ oneOf:
 				type: map
 				properties:
 					type:
-						type: regexp
-						value: '~array~'
+						type: string
+						regexp: '~array~'
 					item:
 						reference: '#'
 					maxCount:
@@ -72,28 +78,12 @@ oneOf:
 				type: map
 				properties:
 					type:
-						type: regexp
-						value: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
-			- #const
-				type: map
-				properties:
-					type:
-						type: regexp
-						value: '~const~'
-					value: null|string|bool|int|float
+						type: string
+						regexp: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
 			- #regexp
 				type: map
 				properties:
 					type:
-						type: regexp
-						value: '~regexp~'
-					value: string
-			- #enum
-				type: map
-				properties:
-					type:
-						type: regexp
-						value: '~enum~'
-					values:
-						type: array
-						item: null|string|bool|int|float
+						type: string
+						regexp: '~string~'
+					regexp: string

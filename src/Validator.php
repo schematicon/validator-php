@@ -45,11 +45,13 @@ final class Validator
 			} elseif (isset($schema['allOf'])) {
 				$isValid = $this->validateAllOf($node, $schema['allOf'], $path, $errors);
 
-			} elseif ($schema['type'] === 'const') {
-				$isValid = $node === $schema['value'];
+			} elseif (isset($schema['enum'])) {
+				$isValid = in_array($node, $schema['enum'], true);
 				if (!$isValid) {
 					$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-					array_unshift($errors, "Wrong data type in '$wrongPath'; expected '$schema[value]'; got '{$node}'");
+					$enum = substr(json_encode($schema['enum']), 1, -1);
+					$wrongType = Helpers::getVariableType($node);
+					array_unshift($errors, "Wrong value in '$wrongPath'; expected value from [$enum]; got type '$wrongType'");
 				}
 
 			} else {
@@ -66,6 +68,13 @@ final class Validator
 						}
 					} elseif ($type === 'string') {
 						if (is_string($node)) {
+							if (isset($schema['regexp']) && preg_match($schema['regexp'], $node) !== 1) {
+								$isValid = false;
+								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+								$wrongType = Helpers::getVariableType($node);
+								$errors[] = "Wrong value in '$wrongPath'; expected value matching '$schema[regexp]' regexp; got type '$wrongType'";
+								break;
+							}
 							$isValid = true;
 							break;
 						}
@@ -81,16 +90,6 @@ final class Validator
 						}
 					} elseif ($type === 'float') {
 						if (is_float($node)) {
-							$isValid = true;
-							break;
-						}
-					} elseif ($type === 'regexp') {
-						if (is_string($node) && preg_match($schema['value'], $node) === 1) {
-							$isValid = true;
-							break;
-						}
-					} elseif ($type === 'enum') {
-						if (!(is_array($node) || $node instanceof \stdClass) && in_array($node, $schema['values'], true)) {
 							$isValid = true;
 							break;
 						}

@@ -11,11 +11,11 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $config = Neon::decode(<<<NEON
 basic:
-	type: regexp
-	value: '~john~'
+	type: string
+	regexp: '~john~'
 nullable:
-	type: regexp|null
-	value: '~^[a-z_]+$~'
+	type: string|null
+	regexp: '~^[a-z_]+$~'
 NEON
 );
 
@@ -28,17 +28,17 @@ Assert::same(
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'regexp'; got 'string'"],
+	["Wrong value in '/'; expected value matching '~john~' regexp; got type 'string'"],
 	$validator->validate('jo')->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'regexp'; got 'int'"],
+	["Wrong data type in '/'; expected 'string'; got 'int'"],
 	$validator->validate(1)->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'regexp'; got 'array'"],
+	["Wrong data type in '/'; expected 'string'; got 'array'"],
 	$validator->validate([])->getErrors()
 );
 
@@ -59,11 +59,11 @@ Assert::same(
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'regexp|null'; got 'array'"],
+	["Wrong data type in '/'; expected 'string|null'; got 'array'"],
 	$validator->validate([])->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'regexp|null'; got 'string'"],
+	["Wrong value in '/'; expected value matching '~^[a-z_]+$~' regexp; got type 'string'"],
 	$validator->validate('ABC_DEF')->getErrors()
 );
