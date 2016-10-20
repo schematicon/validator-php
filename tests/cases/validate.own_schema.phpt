@@ -3,23 +3,14 @@
 namespace SchematiconTests;
 
 use Nette\Neon\Neon;
-use Schematicon\Validator\Normalizer;
-use Schematicon\Validator\Validator;
+use Schematicon\Validator\SchemaValidator;
 use Tester\Assert;
+
 
 require_once __DIR__ . '/../bootstrap.php';
 
 
-$schema = Neon::decode(file_get_contents(__DIR__ . '/../../schema/schema.neon'));
-$normalizer = new Normalizer();
-$normalizedSchema = $normalizer->normalize($schema);
-$validator = new Validator($normalizedSchema, false, function ($path) use ($normalizedSchema) {
-	if ($path === '#') {
-		return $normalizedSchema;
-	} else {
-		throw new \RuntimeException('Unknown reference');
-	}
-});
+$validator = new SchemaValidator();
 
 
 Assert::same(
@@ -74,5 +65,5 @@ Assert::same(
 
 Assert::same(
 	[],
-	$validator->validate($schema)->getErrors()
+	$validator->validate(Neon::decode(file_get_contents(__DIR__ . '/../../schema/schema.neon')))->getErrors()
 );
