@@ -49,8 +49,8 @@ class Normalizer
 							$properties[$propName] = $propValue;
 						}
 						$schema['properties'] = $properties;
-						foreach ($schema['regexp_properties'] ?? [] as $propName => $propValue) {
-							$schema['regexp_properties'][$propName] = $this->normalize($propValue);
+						foreach ($schema['regexpProperties'] ?? [] as $propName => $propValue) {
+							$schema['regexpProperties'][$propName] = $this->normalize($propValue);
 						}
 
 					} elseif ($type === 'array') {
