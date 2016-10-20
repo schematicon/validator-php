@@ -10,3 +10,8 @@ namespace Schematicon\Validator;
 
 
 class ValidatorException extends \Exception {}
+
+
+class SchemaNotFound extends \InvalidArgumentException
+{
+}

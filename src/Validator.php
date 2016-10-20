@@ -281,7 +281,7 @@ class Validator
 		}
 		$referencedSchema = call_user_func($this->referenceCallback, $schemaName);
 		if ($referencedSchema === null) {
-			throw new ValidatorException("Can`t load referenced scheme: '$schemaName'");
+			throw new SchemaNotFound("Reference schema loader cannot load schema with '$schemaName' name.");
 		}
 		$stack[] = [$referencedSchema, $node, $path];
 		return $isValid;

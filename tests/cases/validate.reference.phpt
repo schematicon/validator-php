@@ -3,6 +3,7 @@
 namespace SchematiconTests;
 
 use Nette\Neon\Neon;
+use Schematicon\Validator\SchemaNotFound;
 use Schematicon\Validator\Validator;
 use Schematicon\Validator\ValidatorException;
 use Tester\Assert;
@@ -59,7 +60,7 @@ Assert::exception(function () use ($config) {
 	});
 	$validatorWithoutLoader->validate(1);
 },
-	ValidatorException::class,
-	"Can`t load referenced scheme: 'integer_reference'"
+	SchemaNotFound::class,
+	"Reference schema loader cannot load schema with 'integer_reference' name."
 );
 
