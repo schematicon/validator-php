@@ -74,3 +74,10 @@ Assert::false(
 		'regexp' => 1,
 	])->isValid()
 );
+
+Assert::false(
+	$validator->validate([
+		'type' => 'string',
+		'minLength' => -1,
+	])->isValid()
+);
