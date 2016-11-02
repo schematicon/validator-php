@@ -67,3 +67,10 @@ Assert::same(
 	[],
 	$validator->validate(Neon::decode(file_get_contents(__DIR__ . '/../../schema/schema.neon')))->getErrors()
 );
+
+Assert::false(
+	$validator->validate([
+		'type' => 'string',
+		'regexp' => 1,
+	])->isValid()
+);

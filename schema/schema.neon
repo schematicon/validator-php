@@ -37,53 +37,61 @@ oneOf:
 		type: string
 		regexp: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
 	- #types
-		anyOf:
-			- #map.properties
+		allOf:
+			- #type structure
 				type: map
 				properties:
 					type:
 						type: string
-						regexp: '~map~'
-					properties:
+						regexp: '~^(any|null|string|bool|int|float|map|array)(\|(any|null|string|bool|int|float|map|array))*$~'
+			- #sub-validators
+				anyOf:
+					- #map.properties
 						type: map
-						regexpProperties:
-							'.+':
-								reference: '#'
-			- #map.regexpProperties
-				type: map
-				properties:
-					type:
-						type: string
-						regexp: '~map~'
-					regexpProperties:
+						properties:
+							type:
+								type: string
+								regexp: '~map~'
+							properties:
+								type: map
+								regexpProperties:
+									'.+':
+										reference: '#'
+					- #map.regexpProperties
 						type: map
-						regexpProperties:
-							'.+':
+						properties:
+							type:
+								type: string
+								regexp: '~map~'
+							regexpProperties:
+								type: map
+								regexpProperties:
+									'.+':
+										reference: '#'
+					- #array
+						type: map
+						properties:
+							type:
+								type: string
+								regexp: '~array~'
+							item:
 								reference: '#'
-			- #array
-				type: map
-				properties:
-					type:
-						type: string
-						regexp: '~array~'
-					item:
-						reference: '#'
-					maxCount:
-						type: int
-						optional: true
-					minCount:
-						type: int
-						optional: true
-			- #any|null|string|bool|int|float
-				type: map
-				properties:
-					type:
-						type: string
-						regexp: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
-			- #regexp
-				type: map
-				properties:
-					type:
-						type: string
-						regexp: '~string~'
-					regexp: string
+							maxCount:
+								type: int
+								optional: true
+							minCount:
+								type: int
+								optional: true
+					- #string
+						type: map
+						properties:
+							type:
+								type: string
+								regexp: '~string~'
+							?regexp: string
+					- #others
+						type: map
+						properties:
+							type:
+								type: string
+								regexp: '~any|null|bool|int|float~'
