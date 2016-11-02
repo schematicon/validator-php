@@ -14,6 +14,8 @@ basic:
 	type: float
 nullable:
 	type: float|null
+	minValue: 0
+	maxValue: 9.9
 NEON
 );
 
@@ -52,6 +54,26 @@ Assert::same(
 );
 
 Assert::same(
+	[],
+	$validator->validate(0.0)->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate(9.9)->getErrors()
+);
+
+Assert::same(
 	["Wrong data type in '/'; expected 'float|null'; got 'array'"],
 	$validator->validate([])->getErrors()
+);
+
+Assert::same(
+	["Wrong value in '/'; expected number of maximal value '9.9'; got value '9.91'"],
+	$validator->validate(9.91)->getErrors()
+);
+
+Assert::same(
+	["Wrong value in '/'; expected number of minimal value '0'; got value '-0.1'"],
+	$validator->validate(-0.1)->getErrors()
 );

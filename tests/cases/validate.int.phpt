@@ -14,6 +14,8 @@ basic:
 	type: int
 nullable:
 	type: int|null
+	minValue: 0
+	maxValue: 100
 NEON
 );
 
@@ -57,6 +59,26 @@ Assert::same(
 );
 
 Assert::same(
+	[],
+	$validator->validate(0)->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate(100)->getErrors()
+);
+
+Assert::same(
 	["Wrong data type in '/'; expected 'int|null'; got 'array'"],
 	$validator->validate([])->getErrors()
+);
+
+Assert::same(
+	["Wrong value in '/'; expected number of maximal value '100'; got value '101'"],
+	$validator->validate(101)->getErrors()
+);
+
+Assert::same(
+	["Wrong value in '/'; expected number of minimal value '0'; got value '-1'"],
+	$validator->validate(-1)->getErrors()
 );

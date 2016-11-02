@@ -79,12 +79,12 @@ class Validator
 						}
 					} elseif ($type === 'int') {
 						if (is_int($node)) {
-							$isValid = true;
+							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
 						}
 					} elseif ($type === 'float') {
 						if (is_float($node)) {
-							$isValid = true;
+							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
 						}
 					} elseif ($type === 'array') {
@@ -305,6 +305,30 @@ class Validator
 			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
 			$wrongLength = mb_strlen($node);
 			$errors[] = "Wrong value in '$wrongPath'; expected string of maximal length '$schema[maxLength]'; got length '$wrongLength'";
+			$isValid = false;
+			if ($this->failFast) {
+				return $isValid;
+			}
+		}
+
+		return $isValid;
+	}
+
+
+	private function validateNumber($node, array $schema, string $path, array & $errors): bool
+	{
+		$isValid = true;
+
+		if (isset($schema['minValue']) && $node < $schema['minValue']) {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$errors[] = "Wrong value in '$wrongPath'; expected number of minimal value '$schema[minValue]'; got value '$node'";
+			$isValid = false;
+			if ($this->failFast) {
+				return $isValid;
+			}
+		} elseif (isset($schema['maxValue']) && $node > $schema['maxValue']) {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$errors[] = "Wrong value in '$wrongPath'; expected number of maximal value '$schema[maxValue]'; got value '$node'";
 			$isValid = false;
 			if ($this->failFast) {
 				return $isValid;

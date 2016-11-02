@@ -91,9 +91,17 @@ oneOf:
 							?regexp: string
 							?minLength: int
 							?maxLength: int
-					- #others
+					- #int|float
 						type: map
 						properties:
 							type:
 								type: string
-								regexp: '~any|null|bool|int|float~'
+								regexp: '~int|float~'
+							?minValue: int|float
+							?maxValue: int|float
+					- #any|null|bool
+						type: map
+						properties:
+							type:
+								type: string
+								regexp: '~any|null|bool~'
