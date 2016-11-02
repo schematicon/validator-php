@@ -69,14 +69,7 @@ class Validator
 						}
 					} elseif ($type === 'string') {
 						if (is_string($node)) {
-							if (isset($schema['regexp']) && preg_match($schema['regexp'], $node) !== 1) {
-								$isValid = false;
-								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-								$wrongType = Helpers::getVariableType($node);
-								$errors[] = "Wrong value in '$wrongPath'; expected value matching '$schema[regexp]' regexp; got type '$wrongType'";
-								break;
-							}
-							$isValid = true;
+							$isValid = $this->validateString($node, $schema, $path, $errors);
 							break;
 						}
 					} elseif ($type === 'bool') {
@@ -101,7 +94,6 @@ class Validator
 								break;
 							}
 						}
-
 					} elseif ($type === 'map') {
 						if ((is_array($node) || $node instanceof \stdClass) && !Helpers::isArray($node)) {
 							$isValid = $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
@@ -284,6 +276,41 @@ class Validator
 			throw new SchemaNotFound("Reference schema loader cannot load schema with '$schemaName' name.");
 		}
 		$stack[] = [$referencedSchema, $node, $path];
+		return $isValid;
+	}
+
+
+	private function validateString($node, array $schema, string $path, array & $errors): bool
+	{
+		$isValid = true;
+		if (isset($schema['regexp']) && preg_match($schema['regexp'], $node) !== 1) {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$wrongType = Helpers::getVariableType($node);
+			$errors[] = "Wrong value in '$wrongPath'; expected value matching '$schema[regexp]' regexp; got type '$wrongType'";
+			$isValid = false;
+			if ($this->failFast) {
+				return $isValid;
+			}
+		}
+
+		if (isset($schema['minLength']) && mb_strlen($node) < $schema['minLength']) {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$wrongLength = mb_strlen($node);
+			$errors[] = "Wrong value in '$wrongPath'; expected string of minimal length '$schema[minLength]'; got length '$wrongLength'";
+			$isValid = false;
+			if ($this->failFast) {
+				return $isValid;
+			}
+		} elseif (isset($schema['maxLength']) && mb_strlen($node) > $schema['maxLength']) {
+			$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+			$wrongLength = mb_strlen($node);
+			$errors[] = "Wrong value in '$wrongPath'; expected string of maximal length '$schema[maxLength]'; got length '$wrongLength'";
+			$isValid = false;
+			if ($this->failFast) {
+				return $isValid;
+			}
+		}
+
 		return $isValid;
 	}
 }

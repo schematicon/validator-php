@@ -14,6 +14,8 @@ basic:
 	type: string
 nullable:
 	type: string|null
+	minLength: 2
+	maxLength: 4
 NEON
 );
 
@@ -54,4 +56,19 @@ Assert::same(
 Assert::same(
 	["Wrong data type in '/'; expected 'string|null'; got 'array'"],
 	$validator->validate([])->getErrors()
+);
+
+Assert::same(
+	[],
+	$validator->validate('žž')->getErrors()
+);
+
+Assert::same(
+	["Wrong value in '/'; expected string of minimal length '2'; got length '1'"],
+	$validator->validate('ž')->getErrors()
+);
+
+Assert::same(
+	["Wrong value in '/'; expected string of maximal length '4'; got length '5'"],
+	$validator->validate('žžžžž')->getErrors()
 );

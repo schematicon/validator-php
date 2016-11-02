@@ -89,6 +89,8 @@ oneOf:
 								type: string
 								regexp: '~string~'
 							?regexp: string
+							?minLength: int
+							?maxLength: int
 					- #others
 						type: map
 						properties:
