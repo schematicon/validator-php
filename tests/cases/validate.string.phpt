@@ -11,9 +11,9 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $config = Neon::decode(<<<NEON
 basic:
-	type: int
+	type: string
 nullable:
-	type: int|null
+	type: string|null
 NEON
 );
 
@@ -22,21 +22,21 @@ $validator = new Validator(prepareSchema($config['basic']));
 
 Assert::same(
 	[],
-	$validator->validate(1)->getErrors()
+	$validator->validate('string')->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'float'"],
+	["Wrong data type in '/'; expected 'string'; got 'float'"],
 	$validator->validate(1.0)->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'string'"],
-	$validator->validate("string")->getErrors()
+	["Wrong data type in '/'; expected 'string'; got 'int'"],
+	$validator->validate(2)->getErrors()
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int'; got 'array'"],
+	["Wrong data type in '/'; expected 'string'; got 'array'"],
 	$validator->validate([])->getErrors()
 );
 
@@ -52,6 +52,6 @@ Assert::same(
 );
 
 Assert::same(
-	["Wrong data type in '/'; expected 'int|null'; got 'array'"],
+	["Wrong data type in '/'; expected 'string|null'; got 'array'"],
 	$validator->validate([])->getErrors()
 );
