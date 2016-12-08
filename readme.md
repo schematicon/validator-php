@@ -5,7 +5,7 @@ Schematicon Validator (PHP)
 [![Downloads this Month](https://img.shields.io/packagist/dm/schematicon/validator.svg?style=flat)](https://packagist.org/packages/schematicon/validator)
 [![Stable version](http://img.shields.io/packagist/v/schematicon/validator.svg?style=flat)](https://packagist.org/packages/schematicon/validator)
 
-**Validator** is [Schematicon Schema](https://github.com/schematicon/spec) validator. Schemeaticon schema is innovative declarative language for data structure description. It is programming-language independent; that means you can define the schema using [NEON](https://ne-on.org/), YAML od native PHP arrays.
+**Validator** is [Schematicon Schema](https://github.com/schematicon/spec) validator. Schemeaticon schema is innovative declarative language for data structure description. It is programming-language independent; that means you can define the schema using [NEON](https://ne-on.org/), YAML or native PHP arrays.
 
 ### Example
 
