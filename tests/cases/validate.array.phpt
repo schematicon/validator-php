@@ -27,6 +27,10 @@ advanced:
 		properties:
 			name:
 				type: string|null
+coercion:
+	type: array
+	item:
+		type: bool
 NEON
 );
 
@@ -92,3 +96,13 @@ Assert::same(
 	["Wrong minimum items count in '/'; expected '1'; got '0'"],
 	$validator->validate([])->getErrors()
 );
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator(prepareSchema($config['coercion']));
+
+$result = $validator->validate(['1', '0', true, false, '0', '1'], true);
+Assert::true($result->isValid());
+Assert::same([true, false, true, false, false, true], $result->getData());

@@ -29,11 +29,16 @@ class Validator
 	}
 
 
-	public function validate($data): Result
+	public function validate($data, bool $autoCoercion = false): Result
 	{
+		$outData = $data;
 		$errors = [];
-		$stack = [[$this->schema, $data, '/']];
-		while (list ($schema, $node, $path) = array_pop($stack)) {
+		$stack = [[$this->schema, & $outData, '/']];
+		while ($row = array_pop($stack)) {
+			$schema = $row[0];
+			$node = & $row[1];
+			$path = $row[2];
+
 			if (isset($schema['reference']) && is_string($schema['reference'])) {
 				$isValid = $this->validateReference($node, $schema['reference'], $path, $stack);
 
@@ -76,14 +81,26 @@ class Validator
 						if (is_bool($node)) {
 							$isValid = true;
 							break;
+						} elseif ($autoCoercion && ($node === '1' || $node === '0')) {
+							$node = (bool) $node;
+							$isValid = true;
+							break;
 						}
 					} elseif ($type === 'int') {
 						if (is_int($node)) {
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
+						} elseif ($autoCoercion && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_INT)) !== false) {
+							$node = $filteredValue;
+							$isValid = $this->validateNumber($node, $schema, $path, $errors);
+							break;
 						}
 					} elseif ($type === 'float') {
 						if (is_float($node)) {
+							$isValid = $this->validateNumber($node, $schema, $path, $errors);
+							break;
+						} elseif ($autoCoercion && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_FLOAT)) !== false) {
+							$node = $filteredValue;
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
 						}
@@ -117,34 +134,50 @@ class Validator
 			}
 		}
 
-		return new Result($errors);
+		return new Result($errors, $outData);
 	}
 
 
-	private function validateInnerProperties($node, array $schema, string $path, array & $stack, array & $errors): bool
+	private function validateInnerProperties(& $node, array $schema, string $path, array & $stack, array & $errors): bool
 	{
 		$isValid = true;
-		$node = (array) $node; // may be a stdClass
-		foreach ($schema['properties'] ?? [] as $propName => $propSchema) {
-			if (isset($node[$propName]) || array_key_exists($propName, $node)) {
-				$stack[] = [$propSchema, $node[$propName], "$path$propName/"];
+		if (is_array($node)) {
+			foreach ($schema['properties'] ?? [] as $propName => $propSchema) {
+				if (isset($node[$propName]) || array_key_exists($propName, $node)) {
+					$stack[] = [$propSchema, & $node[$propName], "$path$propName/"];
 
-			} elseif (!isset($propSchema['optional']) || !$propSchema['optional']) {
-				$errors[] = "Missing '$propName' key in '$path' path";
-				$isValid = false;
-				if ($this->failFast) {
-					break;
+				} elseif (!isset($propSchema['optional']) || !$propSchema['optional']) {
+					$errors[] = "Missing '$propName' key in '$path' path";
+					$isValid = false;
+					if ($this->failFast) {
+						break;
+					}
+				}
+			}
+		} else {
+			// stdClass
+			foreach ($schema['properties'] ?? [] as $propName => $propSchema) {
+				if (isset($node->$propName) || property_exists($node, $propName)) {
+					$stack[] = [$propSchema, & $node->$propName, "$path$propName/"];
+
+				} elseif (!isset($propSchema['optional']) || !$propSchema['optional']) {
+					$errors[] = "Missing '$propName' key in '$path' path";
+					$isValid = false;
+					if ($this->failFast) {
+						break;
+					}
 				}
 			}
 		}
+
 		foreach ($schema['regexpProperties'] ?? [] as $propName => $propSchema) {
 			$expression = "~$propName~";
-			foreach ($node as $nodeKey => $nodeValue) {
+			foreach ($node as $nodeKey => & $nodeValue) {
 				if (preg_match($expression, $nodeKey) !== 1) {
 					continue;
 				}
 
-				$stack[] = [$propSchema, $nodeValue, "$path$propName/"];
+				$stack[] = [$propSchema, & $nodeValue, "$path$propName/"];
 			}
 		}
 
@@ -152,7 +185,7 @@ class Validator
 	}
 
 
-	private function validateItems($node, array $schema, string $path, array & $stack, array & $errors): bool
+	private function validateItems(& $node, array $schema, string $path, array & $stack, array & $errors): bool
 	{
 		$isValid = true;
 
@@ -180,8 +213,8 @@ class Validator
 			}
 		}
 
-		foreach ($node as $index => $value) {
-			$stack[] = [$schema['item'], $value, "$path$index/"];
+		foreach ($node as $index => & $value) {
+			$stack[] = [$schema['item'], & $value, "$path$index/"];
 		}
 
 		return $isValid;
