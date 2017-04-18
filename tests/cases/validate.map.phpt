@@ -37,6 +37,10 @@ regexp:
 	regexpProperties:
 		'.+':
 			type: int|string
+coercion:
+	type: map
+	properties:
+		live: bool
 NEON
 );
 
@@ -155,3 +159,18 @@ Assert::same(
 		'prop2' => false,
 	])->getErrors()
 );
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator(prepareSchema($config['coercion']));
+
+$result = $validator->validate(['live' => '1'], true);
+Assert::true($result->isValid());
+Assert::same(true, $result->getData()['live']);
+
+
+$result = $validator->validate((object) ['live' => '1'], true);
+Assert::true($result->isValid());
+Assert::same(true, $result->getData()->live);

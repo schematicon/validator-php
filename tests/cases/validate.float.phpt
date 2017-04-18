@@ -77,3 +77,26 @@ Assert::same(
 	["Wrong value in '/'; expected number of minimal value '0'; got value '-0.1'"],
 	$validator->validate(-0.1)->getErrors()
 );
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator(prepareSchema($config['basic']));
+
+$result = $validator->validate('1.0', true);
+Assert::true($result->isValid());
+Assert::same(1.0, $result->getData());
+
+$result = $validator->validate('-2', true);
+Assert::true($result->isValid());
+Assert::same(-2.0, $result->getData());
+
+$result = $validator->validate('0.0', true);
+Assert::true($result->isValid());
+Assert::same(0.0, $result->getData());
+
+Assert::same(
+	["Wrong data type in '/'; expected 'float'; got 'string'"],
+	$validator->validate('2.0.0', true)->getErrors()
+);

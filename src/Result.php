@@ -14,10 +14,14 @@ class Result
 	/** @var array */
 	private $errors;
 
+	/** @var mixed */
+	private $data;
 
-	public function __construct(array $errors)
+
+	public function __construct(array $errors, $data)
 	{
 		$this->errors = $errors;
+		$this->data = $data;
 	}
 
 
@@ -33,5 +37,11 @@ class Result
 	public function isValid(): bool
 	{
 		return count($this->errors) === 0;
+	}
+
+
+	public function getData()
+	{
+		return $this->data;
 	}
 }

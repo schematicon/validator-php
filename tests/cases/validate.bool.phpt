@@ -60,3 +60,22 @@ Assert::same(
 	["Wrong data type in '/'; expected 'bool|null'; got 'array'"],
 	$validator->validate([])->getErrors()
 );
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator(prepareSchema($config['nullable']));
+
+$result = $validator->validate('1', true);
+Assert::true($result->isValid());
+Assert::same(true, $result->getData());
+
+$result = $validator->validate('0', true);
+Assert::true($result->isValid());
+Assert::same(false, $result->getData());
+
+Assert::same(
+	["Wrong data type in '/'; expected 'bool|null'; got 'string'"],
+	$validator->validate('2', true)->getErrors()
+);
