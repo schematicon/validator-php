@@ -102,7 +102,8 @@ Assert::same(
 
 
 $validator = new Validator(prepareSchema($config['coercion']));
+$validator->coerceStringToBool = true;
 
-$result = $validator->validate(['1', '0', true, false, '0', '1'], true);
+$result = $validator->validate(['1', '0', true, false, '0', '1']);
 Assert::true($result->isValid());
 Assert::same([true, false, true, false, false, true], $result->getData());

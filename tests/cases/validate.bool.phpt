@@ -66,16 +66,17 @@ Assert::same(
 
 
 $validator = new Validator(prepareSchema($config['nullable']));
+$validator->coerceStringToBool = true;
 
-$result = $validator->validate('1', true);
+$result = $validator->validate('1');
 Assert::true($result->isValid());
 Assert::same(true, $result->getData());
 
-$result = $validator->validate('0', true);
+$result = $validator->validate('0');
 Assert::true($result->isValid());
 Assert::same(false, $result->getData());
 
 Assert::same(
 	["Wrong data type in '/'; expected 'bool|null'; got 'string'"],
-	$validator->validate('2', true)->getErrors()
+	$validator->validate('2')->getErrors()
 );

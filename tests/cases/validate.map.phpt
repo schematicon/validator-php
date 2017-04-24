@@ -165,12 +165,13 @@ Assert::same(
 
 
 $validator = new Validator(prepareSchema($config['coercion']));
+$validator->coerceStringToBool = true;
 
-$result = $validator->validate(['live' => '1'], true);
+$result = $validator->validate(['live' => '1']);
 Assert::true($result->isValid());
 Assert::same(true, $result->getData()['live']);
 
 
-$result = $validator->validate((object) ['live' => '1'], true);
+$result = $validator->validate((object) ['live' => '1']);
 Assert::true($result->isValid());
 Assert::same(true, $result->getData()->live);

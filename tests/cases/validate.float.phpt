@@ -83,20 +83,21 @@ Assert::same(
 
 
 $validator = new Validator(prepareSchema($config['basic']));
+$validator->coerceStringToFloat = true;
 
-$result = $validator->validate('1.0', true);
+$result = $validator->validate('1.0');
 Assert::true($result->isValid());
 Assert::same(1.0, $result->getData());
 
-$result = $validator->validate('-2', true);
+$result = $validator->validate('-2');
 Assert::true($result->isValid());
 Assert::same(-2.0, $result->getData());
 
-$result = $validator->validate('0.0', true);
+$result = $validator->validate('0.0');
 Assert::true($result->isValid());
 Assert::same(0.0, $result->getData());
 
 Assert::same(
 	["Wrong data type in '/'; expected 'float'; got 'string'"],
-	$validator->validate('2.0.0', true)->getErrors()
+	$validator->validate('2.0.0')->getErrors()
 );

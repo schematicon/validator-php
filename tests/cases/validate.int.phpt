@@ -88,20 +88,21 @@ Assert::same(
 
 
 $validator = new Validator(prepareSchema($config['basic']));
+$validator->coerceStringToInt = true;
 
-$result = $validator->validate('1', true);
+$result = $validator->validate('1');
 Assert::true($result->isValid());
 Assert::same(1, $result->getData());
 
-$result = $validator->validate('-2', true);
+$result = $validator->validate('-2');
 Assert::true($result->isValid());
 Assert::same(-2, $result->getData());
 
-$result = $validator->validate('0', true);
+$result = $validator->validate('0');
 Assert::true($result->isValid());
 Assert::same(0, $result->getData());
 
 Assert::same(
 	["Wrong data type in '/'; expected 'int'; got 'string'"],
-	$validator->validate('2.0', true)->getErrors()
+	$validator->validate('2.0')->getErrors()
 );

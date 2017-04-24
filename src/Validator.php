@@ -11,6 +11,15 @@ namespace Schematicon\Validator;
 
 class Validator
 {
+	/** @var bool */
+	public $coerceStringToInt = false;
+
+	/** @var bool */
+	public $coerceStringToFloat = false;
+
+	/** @var bool */
+	public $coerceStringToBool = false;
+
 	/** @var array */
 	private $schema;
 
@@ -29,7 +38,7 @@ class Validator
 	}
 
 
-	public function validate($data, bool $autoCoercion = false): Result
+	public function validate($data): Result
 	{
 		$outData = $data;
 		$errors = [];
@@ -81,7 +90,7 @@ class Validator
 						if (is_bool($node)) {
 							$isValid = true;
 							break;
-						} elseif ($autoCoercion && ($node === '1' || $node === '0')) {
+						} elseif ($this->coerceStringToBool && ($node === '1' || $node === '0')) {
 							$node = (bool) $node;
 							$isValid = true;
 							break;
@@ -90,7 +99,7 @@ class Validator
 						if (is_int($node)) {
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
-						} elseif ($autoCoercion && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_INT)) !== false) {
+						} elseif ($this->coerceStringToInt && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_INT)) !== false) {
 							$node = $filteredValue;
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
@@ -99,7 +108,7 @@ class Validator
 						if (is_float($node)) {
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
-						} elseif ($autoCoercion && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_FLOAT)) !== false) {
+						} elseif ($this->coerceStringToFloat && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_FLOAT)) !== false) {
 							$node = $filteredValue;
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
