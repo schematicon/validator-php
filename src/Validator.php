@@ -8,9 +8,36 @@
 
 namespace Schematicon\Validator;
 
+use DateTimeImmutable;
+
 
 class Validator
 {
+	/** @const DateTime regexp; https://tools.ietf.org/html/rfc3339 */
+	const REGEXP_DATETIME = '~
+		\d{4}       # year
+		-\d{2}      # month
+		-\d{2}      # day
+		[T ]
+		\d{2}       # hour
+		:\d{2}      # minute
+		:\d{2}      # seconds
+		(\.\d+)?    # seconds fraction
+		(Z|(        # UTC or timezone definition
+			[+-]    # zone modifier
+			\d{2}   # zone hour
+			:?      # zone hours-minutes separator is optional
+			\d{2}   # zone minutes
+		))
+	~xi';
+
+	/** @const Date regexp; https://tools.ietf.org/html/rfc3339 */
+	const REGEXP_DATE = '~
+		\d{4}       # year
+		-\d{2}      # month
+		-\d{2}      # day
+	~xi';
+
 	/** @var bool */
 	public $coerceStringToInt = false;
 
@@ -19,6 +46,9 @@ class Validator
 
 	/** @var bool */
 	public $coerceStringToBool = false;
+
+	/** @var bool */
+	public $coerceStringToDateTimeImmutable = false;
 
 	/** @var array */
 	private $schema;
@@ -111,6 +141,36 @@ class Validator
 						} elseif ($this->coerceStringToFloat && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_FLOAT)) !== false) {
 							$node = $filteredValue;
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
+							break;
+						}
+					} elseif ($type === 'datetime') {
+						if (is_string($node) && preg_match(self::REGEXP_DATETIME, $node) === 1) {
+							try {
+								$value = new DateTimeImmutable($node);
+								if ($this->coerceStringToDateTimeImmutable) {
+									$node = $value;
+								}
+								$isValid = true;
+							} catch (\Exception $e) {
+								$isValid = false;
+								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+								$errors[] = "Wrong value in '$wrongPath'; expected valid ISO 8601 datetime from RFC 3339 as 'YYYY-MM-DDThh:mm:ss.fff+hh:mm'.";
+							}
+							break;
+						}
+					} elseif ($type === 'date') {
+						if (is_string($node) && preg_match(self::REGEXP_DATE, $node) === 1) {
+							try {
+								$value = new DateTimeImmutable($node);
+								if ($this->coerceStringToDateTimeImmutable) {
+									$node = $value;
+								}
+								$isValid = true;
+							} catch (\Exception $e) {
+								$isValid = false;
+								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+								$errors[] = "Wrong value in '$wrongPath'; expected valid ISO 8601 date as 'YYYY-MM-DD'.";
+							}
 							break;
 						}
 					} elseif ($type === 'array') {

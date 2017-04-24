@@ -35,7 +35,7 @@ oneOf:
 				item: null|string|bool|int|float
 	- #direct types
 		type: string
-		regexp: '~^(any|null|string|bool|int|float)(\|(any|null|string|bool|int|float))*$~'
+		regexp: '~^(any|null|string|bool|int|float|datetime|date)(\|(any|null|string|bool|int|float|datetime|date))*$~'
 	- #types
 		allOf:
 			- #type structure
@@ -43,7 +43,7 @@ oneOf:
 				properties:
 					type:
 						type: string
-						regexp: '~^(any|null|string|bool|int|float|map|array)(\|(any|null|string|bool|int|float|map|array))*$~'
+						regexp: '~^(any|null|string|bool|int|float|datetime|date|map|array)(\|(any|null|string|bool|int|float|datetime|date|map|array))*$~'
 			- #sub-validators
 				anyOf:
 					- #map.properties
@@ -103,9 +103,9 @@ oneOf:
 								regexp: '~int|float~'
 							?minValue: int|float
 							?maxValue: int|float
-					- #any|null|bool
+					- #any|null|bool|datetime|date
 						type: map
 						properties:
 							type:
 								type: string
-								regexp: '~any|null|bool~'
+								regexp: '~any|null|bool|datetime|date~'
