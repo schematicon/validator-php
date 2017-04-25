@@ -14,7 +14,7 @@ use DateTimeImmutable;
 class Validator
 {
 	/** @const DateTime regexp; https://tools.ietf.org/html/rfc3339 */
-	const REGEXP_DATETIME = '~
+	const REGEXP_DATETIME = '~^
 		\d{4}       # year
 		-\d{2}      # month
 		-\d{2}      # day
@@ -29,14 +29,14 @@ class Validator
 			:?      # zone hours-minutes separator is optional
 			\d{2}   # zone minutes
 		))
-	~xi';
+	$~xi';
 
 	/** @const Date regexp; https://tools.ietf.org/html/rfc3339 */
-	const REGEXP_DATE = '~
+	const REGEXP_DATE = '~^
 		\d{4}       # year
 		-\d{2}      # month
 		-\d{2}      # day
-	~xi';
+	$~xi';
 
 	/** @var bool */
 	public $coerceStringToInt = false;

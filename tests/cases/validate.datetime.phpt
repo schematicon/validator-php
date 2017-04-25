@@ -23,7 +23,7 @@ $validator = new Validator(prepareSchema($config['basic']));
 
 Assert::same([], $validator->validate('2016-01-01T12:00:00Z')->getErrors());
 Assert::same([], $validator->validate('2016-01-01T12:00:00+01:00')->getErrors());
-Assert::same([], $validator->validate('2016-01-01 12:00:00Z+0100')->getErrors());
+Assert::same([], $validator->validate('2016-01-01 12:00:00+0100')->getErrors());
 Assert::same([], $validator->validate('2016-01-01T12:00:00.12Z')->getErrors());
 Assert::same([], $validator->validate('0000-01-01T00:00:00Z')->getErrors());
 

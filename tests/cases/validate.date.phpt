@@ -36,6 +36,11 @@ Assert::same(
 );
 
 Assert::same(
+	["Wrong data type in '/'; expected 'date'; got 'string'"],
+	$validator->validate("2016-01-01X")->getErrors()
+);
+
+Assert::same(
 	["Wrong data type in '/'; expected 'date'; got 'array'"],
 	$validator->validate([])->getErrors()
 );
