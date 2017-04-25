@@ -48,7 +48,7 @@ Assert::same(
 );
 
 Assert::same(
-	["Wrong value in '/'; expected valid ISO 8601 datetime from RFC 3339 as 'YYYY-MM-DDThh:mm:ss.fff+hh:mm'."],
+	["Wrong value in '/'; expected valid ISO 8601 datetime from RFC 3339 as 'YYYY-MM-DDThh:mm:ss+hh:mm'."],
 	$validator->validate('9999-99-99T99:99:99Z')->getErrors()
 );
 

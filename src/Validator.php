@@ -154,7 +154,7 @@ class Validator
 							} catch (\Exception $e) {
 								$isValid = false;
 								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
-								$errors[] = "Wrong value in '$wrongPath'; expected valid ISO 8601 datetime from RFC 3339 as 'YYYY-MM-DDThh:mm:ss.fff+hh:mm'.";
+								$errors[] = "Wrong value in '$wrongPath'; expected valid ISO 8601 datetime from RFC 3339 as 'YYYY-MM-DDThh:mm:ss+hh:mm'.";
 							}
 							break;
 						}
