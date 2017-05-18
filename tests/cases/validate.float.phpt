@@ -97,6 +97,11 @@ $result = $validator->validate('0.0');
 Assert::true($result->isValid());
 Assert::same(0.0, $result->getData());
 
+$result = $validator->validate('49.210420445650314');
+Assert::true($result->isValid());
+Assert::same(49.210420445650314, $result->getData());
+Assert::same('49.21042044565', (string) $result->getData()); // precission loss
+
 Assert::same(
 	["Wrong data type in '/'; expected 'float'; got 'string'"],
 	$validator->validate('2.0.0')->getErrors()
