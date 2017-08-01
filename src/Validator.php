@@ -173,6 +173,19 @@ class Validator
 							}
 							break;
 						}
+					} elseif ($type === 'email') {
+						if (!is_string($node)) {
+							continue;
+						}
+						if (filter_var($node, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE) !== null) {
+							$isValid = true;
+							break;
+						} else {
+							$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+							$errors[] = "Wrong value in '$wrongPath'; expected valid email address (RFC 822).";
+							$isValid = false;
+							break;
+						}
 					} elseif ($type === 'array') {
 						if (is_array($node) && Helpers::isArray($node)) {
 							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
