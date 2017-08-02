@@ -21,17 +21,17 @@ NEON
 
 $validator = new Validator(prepareSchema($config['basic']));
 
-Assert::same([], $validator->validate('email@domain.com')->getErrors());
-Assert::same([], $validator->validate('firstname.lastname@domain.com')->getErrors());
-Assert::same([], $validator->validate('email@subdomain.domain.com')->getErrors());
-Assert::same([], $validator->validate('firstname+lastname@domain.com')->getErrors());
-Assert::same([], $validator->validate('"email"@domain.com')->getErrors());
-Assert::same([], $validator->validate('1234567890@domain.com')->getErrors());
-Assert::same([], $validator->validate('email@domain-one.com')->getErrors());
-Assert::same([], $validator->validate('_______@domain.com')->getErrors());
-Assert::same([], $validator->validate('email@domain.name')->getErrors());
-Assert::same([], $validator->validate('email@domain.co.jp')->getErrors());
-Assert::same([], $validator->validate('firstname-lastname@domain.com')->getErrors());
+Assert::true($validator->validate('email@domain.com')->isValid());
+Assert::true($validator->validate('firstname.lastname@domain.com')->isValid());
+Assert::true($validator->validate('email@subdomain.domain.com')->isValid());
+Assert::true($validator->validate('firstname+lastname@domain.com')->isValid());
+Assert::true($validator->validate('"email"@domain.com')->isValid());
+Assert::true($validator->validate('1234567890@domain.com')->isValid());
+Assert::true($validator->validate('email@domain-one.com')->isValid());
+Assert::true($validator->validate('_______@domain.com')->isValid());
+Assert::true($validator->validate('email@domain.name')->isValid());
+Assert::true($validator->validate('email@domain.co.jp')->isValid());
+Assert::true($validator->validate('firstname-lastname@domain.com')->isValid());
 
 
 Assert::same(
@@ -70,15 +70,9 @@ Assert::type('string', $validator->validate('email@domain.com')->getData());
 
 $validator = new Validator(prepareSchema($config['nullable']));
 
-Assert::same(
-	[],
-	$validator->validate(null)->getErrors()
-);
+Assert::true($validator->validate(null)->isValid());
 
-Assert::same(
-	[],
-	$validator->validate('email@domain.com')->getErrors()
-);
+Assert::true($validator->validate('email@domain.com')->isValid());
 
 Assert::same(
 	["Wrong data type in '/'; expected 'email|null'; got 'array'"],
