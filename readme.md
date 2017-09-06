@@ -13,16 +13,16 @@ Schematicon Validator (PHP)
 ```yaml
 type: map
 properties:
-	name: string
-	surname: string
-	sex:
-		enum: [male, female]
-	age: int|null # property may be a null
-	?height: float # property may not exist at all; if exist, it has to be a float
-	siblings:
-		type: array
-		item:
-			type: string
+    name: string
+    surname: string
+    sex:
+        enum: [male, female]
+    age: int|null # property may be a null
+    ?height: float # property may not exist at all; if exist, it has to be a float
+    siblings:
+        type: array
+        item:
+            type: string
 ```
 
 The following inputs may be validated againts the defined schema:
