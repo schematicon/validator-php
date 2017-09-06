@@ -12,7 +12,7 @@ Schematicon Validator (PHP)
 `my_family.neon`:
 ```yaml
 type: map
-propeties:
+properties:
 	name: string
 	surname: string
 	sex:
