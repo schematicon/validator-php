@@ -84,6 +84,7 @@ Assert::same(
 
 $validator = new Validator(prepareSchema($config['basic']));
 $validator->coerceStringToFloat = true;
+$validator->coerceIntToFloat = true;
 
 $result = $validator->validate('1.0');
 Assert::true($result->isValid());
@@ -101,6 +102,10 @@ $result = $validator->validate('49.210420445650314');
 Assert::true($result->isValid());
 Assert::same(49.210420445650314, $result->getData());
 Assert::same('49.21042044565', (string) $result->getData()); // precission loss
+
+$result = $validator->validate(52);
+Assert::true($result->isValid());
+Assert::same(52.0, $result->getData());
 
 Assert::same(
 	["Wrong data type in '/'; expected 'float'; got 'string'"],
