@@ -45,6 +45,9 @@ class Validator
 	public $coerceStringToFloat = false;
 
 	/** @var bool */
+	public $coerceIntToFloat = false;
+
+	/** @var bool */
 	public $coerceStringToBool = false;
 
 	/** @var bool */
@@ -140,6 +143,10 @@ class Validator
 							break;
 						} elseif ($this->coerceStringToFloat && is_string($node) && ($filteredValue = filter_var($node, FILTER_VALIDATE_FLOAT)) !== false) {
 							$node = $filteredValue;
+							$isValid = $this->validateNumber($node, $schema, $path, $errors);
+							break;
+						} elseif ($this->coerceIntToFloat && is_int($node)) {
+							$node = (float) $node;
 							$isValid = $this->validateNumber($node, $schema, $path, $errors);
 							break;
 						}
