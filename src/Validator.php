@@ -31,6 +31,18 @@ class Validator
 		))
 	$~xi';
 
+	/** @const LocalDateTime regexp; */
+	const REGEXP_LOCALDATETIME = '~^
+		\d{4}       # year
+		-\d{2}      # month
+		-\d{2}      # day
+		[T ]
+		\d{2}       # hour
+		:\d{2}      # minute
+		:\d{2}      # seconds
+		(\.\d+)?    # seconds fraction
+	$~xi';
+
 	/** @const Date regexp; https://tools.ietf.org/html/rfc3339 */
 	const REGEXP_DATE = '~^
 		\d{4}       # year
@@ -162,6 +174,21 @@ class Validator
 								$isValid = false;
 								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
 								$errors[] = "Wrong value in '$wrongPath'; expected valid ISO 8601 datetime from RFC 3339 as 'YYYY-MM-DDThh:mm:ss+hh:mm'.";
+							}
+							break;
+						}
+					} elseif ($type === 'localdatetime') {
+						if (is_string($node) && preg_match(self::REGEXP_LOCALDATETIME, $node) === 1) {
+							try {
+								$value = new DateTimeImmutable($node);
+								if ($this->coerceStringToDateTimeImmutable) {
+									$node = $value;
+								}
+								$isValid = true;
+							} catch (\Exception $e) {
+								$isValid = false;
+								$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+								$errors[] = "Wrong value in '$wrongPath'; expected valid ISO 8601 datetime without timezone from as 'YYYY-MM-DDThh:mm:ss'.";
 							}
 							break;
 						}
