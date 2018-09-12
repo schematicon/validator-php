@@ -220,6 +220,19 @@ class Validator
 							$isValid = false;
 							break;
 						}
+					} elseif ($type === 'url') {
+						if (!is_string($node)) {
+							continue;
+						}
+						if (filter_var($node, FILTER_VALIDATE_URL, FILTER_NULL_ON_FAILURE) !== null) {
+							$isValid = true;
+							break;
+						} else {
+							$wrongPath = $path === '/' ? $path : rtrim($path, '/');
+							$errors[] = "Wrong value in '$wrongPath'; expected valid URL (RFC 2396).";
+							$isValid = false;
+							break;
+						}
 					} elseif ($type === 'array') {
 						if (is_array($node) && Helpers::isArray($node)) {
 							$isValid = $this->validateItems($node, $schema, $path, $stack, $errors);
