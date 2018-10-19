@@ -39,7 +39,7 @@ $result = $validator->validate([
 	'age' => 18,
 	'height' => 180.00,
 	'siblings' => ['Arya'],
-];
+]);
 
 $result->isValid(); // true
 $result->getErrors(); // []
