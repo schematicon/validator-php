@@ -41,6 +41,10 @@ coercion:
 	type: map
 	properties:
 		live: bool
+alloptional:
+	type: map
+	properties:
+		?type: string
 NEON
 );
 
@@ -175,3 +179,16 @@ Assert::same(true, $result->getData()['live']);
 $result = $validator->validate((object) ['live' => '1']);
 Assert::true($result->isValid());
 Assert::same(true, $result->getData()->live);
+
+
+// =====================================================================================================================
+
+
+$validator = new Validator(prepareSchema($config['alloptional']));
+$validator->coerceStringToBool = true;
+
+$result = $validator->validate([]);
+Assert::true($result->isValid());
+
+$result = $validator->validate((object) []);
+Assert::true($result->isValid());

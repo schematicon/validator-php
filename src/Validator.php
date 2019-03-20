@@ -241,7 +241,7 @@ class Validator
 							}
 						}
 					} elseif ($type === 'map') {
-						if ((is_array($node) || $node instanceof \stdClass) && !Helpers::isArray($node)) {
+						if ((is_array($node) || $node instanceof \stdClass) && ((is_array($node) && count($node) === 0) || !Helpers::isArray($node))) {
 							$isValid = $this->validateInnerProperties($node, $schema, $path, $stack, $errors);
 							if ($isValid) {
 								break;
